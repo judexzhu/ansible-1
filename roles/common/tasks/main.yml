@@ -1,0 +1,13 @@
+---
+
+- include: local_ansible_user.yml
+
+- include: redhat_repos.yml
+  when: "ansible_os_family == 'RedHat'"
+
+
+# Flush any handlers here, notably so package update can take place
+# This assumes the common role is run early (if not first),
+# and that the line below will therefore run relatively little
+
+- meta: flush_handlers

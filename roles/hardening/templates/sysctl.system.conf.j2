@@ -1,0 +1,22 @@
+
+fs.suid_dumpable = 0
+
+# Increase file descriptor limit, from 10k
+# NOTE: On 64 bit Suse-based systems, this limit is 40k
+fs.file-max = 65535
+
+
+# Enable exec shield, and virtual address randomisation
+kernel.exec-shield = 1
+kernel.randomize_va_space = 2
+
+# Disable debugging requests
+kernel.sysrq = 0
+
+vm.swappiness=1
+vm.overcommit=1
+
+
+# Increase max number of PIDs, from default of c. 32k
+kernel.pid_max = 65535
+

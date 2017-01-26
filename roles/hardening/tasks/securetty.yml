@@ -1,0 +1,9 @@
+---
+
+- name: hardening | securetty | prevent root console login
+  copy:
+    dest: /etc/securetty
+    content: ""
+    owner: root
+    group: root
+    mode: "0644"

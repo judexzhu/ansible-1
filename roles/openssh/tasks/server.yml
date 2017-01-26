@@ -1,0 +1,46 @@
+---
+
+
+
+- name: openssh | server | install packages
+  package:
+    name: "{{ sshd_server_pkg }}"
+  tags:
+    - ssh
+    - openssh
+
+- name: openssh | server | create banner
+  copy:
+    content: "{{ sshd_server_banner }}\n"
+    dest: /etc/issue.net
+    owner: root
+    group: root
+    mode: "0644"
+  tags:
+    - ssh
+    - openssh
+
+- name: openssh | server | create configuration
+  template:
+    src: sshd_config.j2
+    dest: /etc/ssh/sshd_config
+    owner: root
+    group: root
+    mode: "0640"
+    validate: "/usr/sbin/sshd -tf %s"
+  notify:
+    - openssh | server | restart
+  tags:
+    - ssh
+    - openssh
+
+
+
+- name: openssh | server | run and enable service
+  service:
+    name: "{{ sshd_service_name }}"
+    enabled: yes
+    state: running
+  tags:
+    - ssh
+    - openssh

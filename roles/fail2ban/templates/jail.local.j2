@@ -1,0 +1,18 @@
+[DEFAULT]
+# Ban hosts for two hours
+bantime = 7200
+
+# Use ipsets to block bad actors
+banaction = firewallcmd-ipset
+
+
+[sshd]
+enabled = true
+backend = systemd
+journalmatch =  _SYSTEMD_UNIT=sshd.service + _COMM=sshd
+maxretry = 4
+
+[selinux-ssh]
+enable = true
+maxretry = 4
+backend = auto

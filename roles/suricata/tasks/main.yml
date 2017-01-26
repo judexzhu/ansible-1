@@ -1,0 +1,106 @@
+---
+
+- name: suricata | package | install
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - suricata
+  tags:
+    - suricata
+    - ids
+
+- name: ids | suricata | create group
+  group:
+    name: suricata
+    state: present
+    system: true
+  tags:
+    - ids
+    - suricata
+
+- name: ids | suricata | create user
+  user:
+    name: suricata
+    state: present
+    system: true
+    group: suricata
+    shell: /sbin/nologin
+    home: /var/lib/suricata
+  tags:
+    - ids
+    - suricata
+
+- name: ids | suricata | create directories
+  file:
+    name: "{{ item }}"
+    state: directory
+    owner: suricata
+    group: suricata
+    mode: "1750"
+  with_items:
+    - /etc/suricata
+    - /etc/suricata/rules
+    - /var/log/suricata
+  tags:
+    - ids
+    - suricata
+
+- name: ids | suricata | create sudo rule to allow restarting daemon
+  template:
+    src: sudo.suricata.j2
+    dest: /etc/sudoers.d/suricata
+    owner: root
+    group: root
+    mode: "0600"
+  tags:
+    - ids
+    - suricata
+
+- name: ids | suricata | configure ET rules updater
+  template:
+    src: systemd.suricata-et-rules.service.j2
+    dest: /etc/systemd/system/suricata-et-rules.service
+    owner: root
+    group: root
+    mode: "0600"
+  tags:
+    - ids
+    - suricata
+    - et-open-rules
+
+- name: ids | suricata | configure ET rules update timer
+  template:
+    src: systemd.suricata.timer.j2
+    dest: /etc/systemd/system/suricata-et-rules.timer
+    owner: root
+    group: root
+    mode: "0600"
+  tags:
+    - ids
+    - suricata
+    - et-open-rules
+
+- name: ids | suricata | create configuration
+  template: src=suricata.yaml.j2 dest=/etc/suricata/suricata.yaml owner=root group=root mode=600
+  tags:
+    - ids
+    - suricata
+
+- name: ids | suricata | enable rule refresh
+  service: name=suricata-et-rules state=stopped enabled=yes
+  tags:
+    - ids
+    - suricata
+
+- name: suricata | service | run
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  with_items:
+    - suricata
+    - suricata-et-rules.timer
+  tags:
+    - suricata
+    - ids

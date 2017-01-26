@@ -1,0 +1,9 @@
+---
+
+- name: hardening | rkhunter | install
+  package:
+    name: rkhunter
+    state: present
+  tags:
+    - rkhunter
+    - integrity

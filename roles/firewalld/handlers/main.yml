@@ -1,0 +1,4 @@
+---
+
+- name: firewalld | policy | reload
+  command: /bin/firewall-cmd --reload

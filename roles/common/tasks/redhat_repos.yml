@@ -1,0 +1,14 @@
+---
+
+
+- name: common | repositories | install epel
+  package:
+    name: epel-release
+    state: present
+  notify:
+    common | packages | update all
+  tags:
+    - common
+    - epel
+
+

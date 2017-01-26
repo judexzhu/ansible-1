@@ -1,0 +1,56 @@
+---
+
+- name: firewalld | packages | install
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - python-firewall
+    - firewalld
+  tags:
+    - firewall
+    - firewalld
+
+# Beware the item order - /etc/firewalld needs to be first
+
+- name: firewalld | config | create directories
+  file:
+    name:  "{{ item }}"
+    owner: root
+    group: root
+    mode: 1700
+    state: directory
+  with_items:
+    - /etc/firewalld
+    - /etc/firewalld/zones
+    - /etc/firewalld/services
+  tags:
+    - firewall
+    - firewalld
+
+
+- name: firewalld | service | run and enable
+  service:
+    name: firewalld
+    state: running
+    enabled: yes
+  tags:
+    - firewall
+    - firewalld
+
+# TODO: It may be some people do in fact want REJECT rather than DROP
+
+- name: firewalld | zones | set default target to DROP
+  command: "/bin/firewall-cmd --set-target=DROP --zone={{ item }} --permanent"
+  with_items:
+    - public
+    - dmz
+    - external
+    - work
+    - home
+    - internal
+  notify:
+    - firewalld | policy | reload
+  tags:
+    - firewall
+    - firewalld

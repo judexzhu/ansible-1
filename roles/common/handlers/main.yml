@@ -1,0 +1,15 @@
+---
+
+- name: common | sysctl | reload
+  command: /sbin/sysctl --load --system
+  tags:
+    - sysctl
+
+
+
+- name: common | packages | update all
+  package:
+    name: "*"
+    state: latest
+  tags:
+    - sysctl

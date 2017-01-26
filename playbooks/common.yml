@@ -1,0 +1,12 @@
+---
+
+- hosts: all
+  roles:
+    - {role: selinux, when: "ansible_os_family == 'RedHat'"}
+    - common
+    - hardening
+    - firewalld
+    - {role: suricata, when: "'ids' in groups"}
+    - fail2ban
+    - openssh
+

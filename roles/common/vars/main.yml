@@ -1,0 +1,9 @@
+
+local_ansible_user: ansible
+local_ansible_group: deploy
+
+local_ansible_generate_key: no
+
+local_ansible_authorised_keys:
+  - "{{ lookup('file','~/.ssh/id_rsa.pub') }}"
+ 

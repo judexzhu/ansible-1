@@ -1,0 +1,9 @@
+---
+
+- name: openssh | server | restart
+  service:
+    name: "{{ sshd_service_name }}"
+    state: restarted
+  tags:
+    - openssh
+    - ssh

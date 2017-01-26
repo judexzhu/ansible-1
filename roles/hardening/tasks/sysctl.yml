@@ -1,0 +1,28 @@
+---
+
+- name: hardening | sysctl | create configuration directory
+  file:
+    name: "/etc/sysctl.d/"
+    state: directory
+    owner: root
+    group: root
+    mode: "1750"
+  tags:
+    - hardening
+    - sysctl
+
+- name: hardening | sysctl | create configuration
+  template:
+    src: "sysctl.{{ item }}.conf.j2"
+    dest: "/etc/sysctl.d/50-{{ item }}.conf"
+    owner: root
+    group: root
+    mode: "0640"
+  with_items:
+    - system
+    - network
+  notify:
+    - common | sysctl | reload
+  tags:
+    - hardening
+    - sysctl

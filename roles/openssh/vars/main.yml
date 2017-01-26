@@ -1,0 +1,29 @@
+sshd_home: /var/lib/sshd
+sshd_server_pkg: "openssh-server"
+
+sshd_service_name: sshd
+sshd_server_port: 22
+
+sshd_server_key_exchange:
+    - curve25519-sha256@libssh.org
+    - diffie-hellman-group-exchange-sha256
+
+sshd_server_ciphers:
+    - chacha20-poly1305@openssh.com
+    - aes256-gcm@openssh.com,aes256-ctr
+
+sshd_server_mac:
+    - hmac-sha2-512-etm@openssh.com
+    - hmac-sha2-256-etm@openssh.com
+    - hmac-sha2-512
+    - hmac-sha2-256
+    - hmac-ripemd160
+
+sshd_server_allowed_groups:
+    - admins
+    - "{{ local_ansible_group|default('deploy') }}"
+    - users
+
+sshd_server_allowed_users: []
+sshd_server_banner: "Authorised use only. All usage is monitored, any unauthorised activity will be addressed through any and all available means."
+

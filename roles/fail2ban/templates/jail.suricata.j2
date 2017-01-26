@@ -1,0 +1,25 @@
+#
+[suricata-badactors]
+
+enabled  = true
+port     = ssh,http,https
+filter   = suricata-badactors
+logpath  =  /var/log/suricata/fast.log
+maxretry = 2
+backend  = polling
+journalmatch =
+# Ban bad hosts flagged by suricata for 4 hours
+bantime = 14400
+
+[suricata-prio1]
+
+enabled  = true
+port     = ssh,http,https
+filter   = suricata-prio1
+logpath  =  /var/log/suricata/fast.log
+maxretry = 1
+findtime = 1
+backend  = polling
+journalmatch =
+# Ban bad hosts flagged by suricata for 8 hours
+bantime = 28800

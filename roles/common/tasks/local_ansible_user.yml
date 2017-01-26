@@ -1,0 +1,30 @@
+---
+
+- name: common | local ansible user | create group
+  group: name="{{ local_ansible_group }}" state=present
+
+- name: common | local ansible user | create user
+  user: 
+    name: "{{ local_ansible_user }}"
+    group: "{{ local_ansible_group }}"
+    home: "/home/{{ local_ansible_user }}"
+    state: present
+    generate_ssh_key: "{{ local_ansible_generate_key }}"
+    ssh_key_bits: 4096
+    ssh_key_type: rsa
+
+
+- name: common | local ansible user | provision authorised keys
+  authorized_key: 
+    user: "{{ local_ansible_user }}"
+    state: present 
+    key: "{{ item }}"
+  with_items: "{{ local_ansible_authorised_keys }}"
+
+- name: common | local ansible user | create sudo config
+  copy: 
+    dest: "/etc/sudoers.d/local_{{ local_ansible_user }}" 
+    owner: root 
+    group: root 
+    mode: 1600 
+    content: "Defaults: {{ local_ansible_user }} !requiretty\n{{ local_ansible_user }} ALL=(ALL) NOPASSWD:ALL\n"

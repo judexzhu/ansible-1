@@ -1,0 +1,74 @@
+---
+
+- name: fail2ban | config | create directory
+  file:
+    name: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "1700"
+  with_items:
+    - /etc/fail2ban
+    - /etc/fail2ban/action.d
+    - /etc/fail2ban/filter.d
+    - /etc/fail2ban/fail2ban.d
+    - /etc/fail2ban/fail.d
+  tags:
+    - fail2ban
+    - firewall
+
+- name: fail2ban | packages | install
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - fail2ban
+    - fail2ban-systemd
+    - fail2ban-firewalld
+  tags:
+    - fail2ban
+    - firewall
+
+
+# fail2ban will by default REJECT (because https://github.com/fail2ban/fail2ban/issues/507).
+
+- name: fail2ban | config | create iptables-blocktype.local
+  copy:
+    dest: /etc/fail2ban/action.d/iptables-blocktype.local
+    content: "[Init]\nblocktype = DROP\n"
+    owner: root
+    group: root
+    mode: "0640"
+  when: "fail2ban_blocktype | default('DROP') == 'DROP'"
+  notify:
+    - fail2ban | service | restart
+  tags:
+    - fail2ban
+    - firewall
+
+- name: fail2ban | config | create local jail config
+  template:
+    src: jail.local.j2
+    dest: /etc/fail2ban/jail.local
+    owner: root
+    group: root
+    mode: "0400"
+  notify:
+    - fail2ban | service | restart
+  tags:
+    - fail2ban
+    - firewall
+
+- include: suricata.yml
+  when: "'ids' in groups"
+
+- name: fail2ban | service | run and enable
+  service:
+    name: fail2ban
+    state: running
+    enabled: yes
+  tags:
+    - fail2ban
+    - firewall
+
+

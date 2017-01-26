@@ -1,0 +1,33 @@
+---
+
+- include_vars: "{{ ansible_os_family | lower }}.yml"
+
+- name: openssh | config | create directory
+  file:
+    name: /etc/ssh/
+    state: directory
+    mode: "1700"
+    owner: root
+    group: root
+  tags:
+    - ssh
+    - openssh
+
+- name: openssh | group | create unprivileged
+  group:
+    name: sshd
+    system: true
+    state: present
+
+- name: openssh | user | create unprivileged
+  user:
+    name: sshd
+    state: present
+    group: sshd
+    system: true
+    home: "{{ sshd_home }}"
+    shell: /sbin/nologin
+    comment: "Privilege-separated SSH"
+
+
+- include: server.yml

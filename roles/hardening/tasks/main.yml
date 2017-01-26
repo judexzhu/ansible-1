@@ -1,0 +1,5 @@
+---
+
+- include: securetty.yml
+- include: sysctl.yml
+- include: rkhunter.yml
