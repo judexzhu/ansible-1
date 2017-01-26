@@ -9,4 +9,5 @@
     - {role: suricata, when: "'ids' in groups"}
     - fail2ban
     - openssh
+    - auditd
 
