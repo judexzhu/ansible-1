@@ -2,7 +2,7 @@
 
 - name: common | local ansible user | create group
   group:
-    name:"{{ local_ansible_group }}"
+    name: "{{ local_ansible_group }}"
     state: present
   tags:
     - ansible
