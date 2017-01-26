@@ -5,11 +5,10 @@
   tags:
     - sysctl
 
-
-
 - name: common | packages | update all
   package:
     name: "*"
     state: latest
   tags:
-    - sysctl
+    - update
+    - software
