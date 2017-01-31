@@ -1,0 +1,17 @@
+---
+
+- name: common | ntp | configure servers for timesyncd
+  template:
+    src: timesyncd.conf.j2
+    dest: /etc/systemd/timesyncd.conf
+    owner: root
+    group: root
+    mode: '0640'
+  notify:
+    - common | ntp | enable timesyncd
+  tags:
+    - common
+    - timesync
+    - ntp
+
+

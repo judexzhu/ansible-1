@@ -5,6 +5,7 @@
 - include: redhat_repos.yml
   when: "ansible_os_family == 'RedHat'"
 
+- include: timesyncd.yml
 
 # Flush any handlers here, notably so package update can take place
 # This assumes the common role is run early (if not first),

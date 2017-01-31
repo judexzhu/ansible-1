@@ -6,4 +6,13 @@ local_ansible_generate_key: no
 
 local_ansible_authorised_keys:
   - "{{ lookup('file','~/.ssh/id_rsa.pub') }}"
- 
+
+
+ntp_servers:
+  - 0.pool.ntp.org
+  - 1.pool.ntp.org
+  - 2.pool.ntp.org
+  - 3.pool.ntp.org
+
+
+fallback_ntp_servers: []

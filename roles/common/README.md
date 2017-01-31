@@ -27,3 +27,27 @@ This will trigger a full system update (via the `common | packages | update all`
 The main reason for it doing so is that certain other roles (openssh, notably) will no work correctly otherwise.
 In order to use certain ciphers, this is in effect necessary.
 
+Configure systemd-timesyncd and enable it
+------------------------------------------
+
+There seem to be 4 basic choices on Linux for synching time:
+
+* ntpd, the default server/client for linux
+* ntpdate, which (apparently) comes with ntpd, and is client-only
+* sntp, client-only, which supposedly supercedes ntpdate
+* systemd-timesyncd (and timedatectl), another client-only baked in to systemd.
+
+Most documented best practice seems to agree ntpd is a bad choice unless you _want_ a server.
+
+Of the remaining 3 options, sntp seems to be recommended over ntpdate.
+sntp itself generally requires installation and a cronjob/systemd timer.
+systemd-timesyncd seems to do what sntp does, without the cruft.
+
+This role will configure timesyncd (to use x.pool.ntp.org, for 0 < x < 4).
+
+It will also call `timedatectl set-ntp true` to enable and run the NTP client.
+
+Please note this aspect of the role will likely change.
+For one, ntpsec should be appearing some time soon.
+It may also be further/better research will end up saying sntp is a better choice.
+

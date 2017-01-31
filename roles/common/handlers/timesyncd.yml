@@ -1,0 +1,8 @@
+---
+
+- name: common | ntp | enable timesyncd
+  command: /usr/bin/timedatectl set-ntp true
+  tags:
+    - common
+    - timesync
+    - ntp
