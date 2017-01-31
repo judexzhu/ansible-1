@@ -51,3 +51,4 @@ Please note this aspect of the role will likely change.
 For one, ntpsec should be appearing some time soon.
 It may also be further/better research will end up saying sntp is a better choice.
 
+See https://wiki.archlinux.org/index.php/Time#Time_synchronization for additional info.
