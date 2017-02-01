@@ -1,0 +1,17 @@
+---
+
+- include: redhat.yml
+  when: "ansible_os_family == 'RedHat'"
+
+- name: sysdig | packages | install
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - kernel-devel
+    - sysdig
+  tags:
+    - sysdig
+
+- include: falco.yml
+  when: "sysdig_include_falco | default(True)"

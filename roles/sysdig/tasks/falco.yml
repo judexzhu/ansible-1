@@ -1,0 +1,19 @@
+---
+
+- name: sysdig | packages | install falco
+  package:
+    name: falco
+    state: present
+  tags:
+    - sysdig
+    - falco
+
+
+- name: sysdig | service | enable and run falco
+  service:
+    name: falco
+    state: running
+    enabled: yes
+  tags:
+    - sysdig
+    - falco

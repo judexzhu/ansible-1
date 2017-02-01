@@ -1,0 +1,21 @@
+---
+
+#- name: sysdig | repo | import gpg key
+#  rpm_key:
+#    key: https://s3.amazonaws.com/download.draios.com/DRAIOS-GPG-KEY.public
+#    state: present
+#  tags:
+#    - sysdig
+#    - redhat
+
+- name: sysdig | repo | add Draios
+  yum_repository:
+    name: draios
+    state: present
+    description: "Draios/sysdig repo"
+    baseurl: "http://download.draios.com/stable/rpm/$basearch"
+    gpgcheck: yes
+    gpgkey: https://s3.amazonaws.com/download.draios.com/DRAIOS-GPG-KEY.public
+  tags:
+    - sysdig
+    - redhat
