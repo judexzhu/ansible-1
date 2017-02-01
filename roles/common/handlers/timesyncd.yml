@@ -1,5 +1,8 @@
 ---
 
+# TODO: It may be this is important enough to have in a task.
+# Because/even though that would call the command for every ansible run
+
 - name: common | ntp | enable timesyncd
   command: /usr/bin/timedatectl set-ntp true
   tags:
