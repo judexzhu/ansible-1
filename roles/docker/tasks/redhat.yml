@@ -1,0 +1,13 @@
+---
+
+- name: docker | repo | configure
+  yum_repository:
+    name: docker
+    state: present
+    description: "Docker repository"
+    baseurl: "https://yum.dockerproject.org/repo/main/centos/7/"
+    gpgcheck: yes
+    gpgkey: "https://yum.dockerproject.org/gpg"
+  tags:
+    - docker
+    - redhat
