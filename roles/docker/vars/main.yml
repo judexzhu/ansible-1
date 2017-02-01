@@ -1,4 +1,5 @@
 docker_packages:
   - docker-engine
+  - docker-engine-selinux
 
 docker_service_name: docker
