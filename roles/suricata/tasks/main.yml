@@ -10,7 +10,7 @@
     - suricata
     - ids
 
-- name: ids | suricata | create group
+- name: suricata | group | create
   group:
     name: suricata
     state: present
@@ -19,7 +19,7 @@
     - ids
     - suricata
 
-- name: ids | suricata | create user
+- name: suricata | user | create
   user:
     name: suricata
     state: present
@@ -46,7 +46,7 @@
     - ids
     - suricata
 
-- name: ids | suricata | create sudo rule to allow restarting daemon
+- name: suricata |  sudo | allow suricata user to restart daemon
   template:
     src: sudo.suricata.j2
     dest: /etc/sudoers.d/suricata
@@ -57,7 +57,7 @@
     - ids
     - suricata
 
-- name: ids | suricata | configure ET rules updater
+- name: suricata | rules | configure ET rules updater
   template:
     src: systemd.suricata-et-rules.service.j2
     dest: /etc/systemd/system/suricata-et-rules.service
@@ -69,7 +69,7 @@
     - suricata
     - et-open-rules
 
-- name: ids | suricata | configure ET rules update timer
+- name: suricata | rules | configure ET rules update timer
   template:
     src: systemd.suricata.timer.j2
     dest: /etc/systemd/system/suricata-et-rules.timer
@@ -81,17 +81,18 @@
     - suricata
     - et-open-rules
 
-- name: ids | suricata | create configuration
+- name: suricata | config | create
   template: src=suricata.yaml.j2 dest=/etc/suricata/suricata.yaml owner=root group=root mode=600
   tags:
     - ids
     - suricata
 
-- name: ids | suricata | enable rule refresh
+- name: suricata | service | enable rule refresh units
   service: name=suricata-et-rules state=stopped enabled=yes
   tags:
     - ids
     - suricata
+    - service
 
 - name: suricata | service | run
   service:
@@ -104,3 +105,4 @@
   tags:
     - suricata
     - ids
+    - service
