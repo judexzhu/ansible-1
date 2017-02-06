@@ -1,5 +1,10 @@
 ---
 
+- name: common | ntp | install package for timesyncd
+  package:
+    name: ntp
+    state: installed
+
 - name: common | ntp | configure servers for timesyncd
   template:
     src: timesyncd.conf.j2

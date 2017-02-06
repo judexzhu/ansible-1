@@ -7,6 +7,8 @@
 
 - include: timesyncd.yml
 
+- include: unzip.yml
+
 # Flush any handlers here, notably so package update can take place
 # This assumes the common role is run early (if not first),
 # and that the line below will therefore run relatively little

@@ -52,3 +52,13 @@ For one, ntpsec should be appearing some time soon.
 It may also be further/better research will end up saying sntp is a better choice.
 
 See https://wiki.archlinux.org/index.php/Time#Time_synchronization for additional info.
+
+
+NB: It turns out that for Centos7, the above is incorrect.
+timesyncd relies on the ntp daemon to sync time.
+The relevant task therefore takes care of installing it.
+
+Install unzip
+--------------
+
+Needed to extract zip files, e.g. for consul.
