@@ -1,0 +1,29 @@
+[Unit]
+Description=Prometheus node exporter service
+After=network.target
+Wants=network.target
+
+[Service]
+ExecStart=/opt/prometheus/bin/node_exporter
+Restart=always
+RestartSec=20
+TimeoutSec=300
+# This seems to be the easiest way to ensure we can pull all metrics we want
+SupplymentaryGroups=root
+StandardOutput=journal
+StandardError=journal
+User=prometheus
+Group=prometheus
+ProtectSystem=full
+ProtectHome=yes
+PrivateTmp=yes
+CapabilityBoundingSet=~CAP_SYS_ADMIN
+ReadOnlyPaths=/
+NoNewPrivileges=yes
+CPUAccounting=yes
+MemoryAccounting=yes
+IOAccounting=yes
+TasksAccounting=yes
+
+[Install]
+WantedBy=multi-user.target

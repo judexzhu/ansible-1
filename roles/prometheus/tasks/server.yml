@@ -1,0 +1,81 @@
+---
+
+- name: prometheus | server | download release
+  get_url:
+    url: "https://github.com/prometheus/prometheus/releases/download/v{{ prometheus_server_version }}/prometheus-{{ prometheus_server_version }}.{{ prometheus_arch }}.tar.gz"
+    dest: "/opt/prometheus/releases/prometheus-{{ prometheus_server_version }}.tgz"
+    checksum: "{{ prometheus_server_checksum }}"
+    mode: "0640"
+    owner: prometheus
+    group: prometheus
+  tags:
+    - prometheus
+    - prometheus_server
+    - monitoring
+
+- name: prometheus | server | extract release
+  unarchive:
+    copy: no
+    src: "/opt/prometheus/releases/prometheus-{{ prometheus_server_version }}.tgz"
+    dest: "/opt/prometheus/releases"
+    creates: "/opt/prometheus/releases/prometheus-{{ prometheus_server_version }}.{{ prometheus_arch }}"
+    owner: root
+    group: prometheus
+    mode: "1750"
+  tags:
+    - prometheus
+    - prometheus_server
+    - monitoring
+
+
+- name: prometheus | server | create link to current release
+  file:
+    src: "/opt/prometheus/releases/prometheus-{{ prometheus_server_version }}.{{ prometheus_arch }}/"
+    dest: /opt/prometheus/releases/current
+    state: link
+    owner: root
+    group: prometheus
+    mode: "1750"
+
+
+- name: prometheus | server | create link to binary
+  file:
+    src: "/opt/prometheus/releases/prometheus-{{ prometheus_server_version }}.{{ prometheus_arch }}/prometheus"
+    dest: /opt/prometheus/bin/prometheus
+    state: link
+    owner: root
+    group: prometheus
+    mode: "1750"
+
+- name: prometheus | server | create configuration
+  template:
+    src: "prometheus.yml.j2"
+    dest: /etc/prometheus/prometheus.yml
+    owner: root
+    group: prometheus
+    mode: "0640"
+
+
+- name: prometheus | server | create service unit
+  template:
+    src: "systemd.prometheus.service.j2"
+    dest: "/etc/systemd/system/prometheus.service"
+    owner: root
+    group: root
+    mode: "0640"
+  tags:
+    - prometheus
+    - prometheus_server
+    - monitoring
+
+
+- name: prometheus | server | enable and run
+  service:
+    name: prometheus
+    state: running
+    enabled: yes
+  tags:
+    - prometheus
+    - prometheus_server
+    - monitoring
+    - service

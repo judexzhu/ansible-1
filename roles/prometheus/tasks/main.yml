@@ -1,0 +1,60 @@
+---
+
+- include_vars: arm.yml
+  when: "'arm' in ansible_architecture"
+  tags:
+    - prometheus
+    - monitoring
+
+
+- name: prometheus | group | create
+  group:
+    name: prometheus
+    state: present
+  tags:
+    - prometheus
+    - monitoring
+
+
+- name: prometheus | user | create
+  user:
+    name: prometheus
+    group: prometheus
+    state: present
+    home: /opt/prometheus
+    shell: /sbin/nologin
+  tags:
+    - prometheus
+    - monitoring
+
+- name: prometheus | directories | create
+  file:
+    name: "{{ item }}"
+    state: directory
+    owner: prometheus
+    group: prometheus
+    mode: "1750"
+  with_items:
+    - /opt/prometheus/bin
+    - /opt/prometheus/data
+    - /opt/prometheus/releases
+    - /opt/prometheus/exporters
+    - /etc/prometheus
+    - /etc/prometheus/rules
+    - /etc/prometheus/jobs
+    - /etc/prometheus/sd
+    - /etc/prometheus/exporters
+  tags:
+    - prometheus
+    - monitoring
+
+
+
+- include: server.yml
+  when: "'prometheus_server' in group_names"
+
+- include: alertmanager.yml
+  when: "'prometheus_alertmanager' in group_names"
+
+
+- include: node_exporter.yml

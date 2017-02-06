@@ -1,0 +1,79 @@
+---
+
+- name: prometheus | alertmanager | download
+  get_url:
+    url: "https://github.com/prometheus/alertmanager/releases/download/v{{ prometheus_alertmanager_version }}/alertmanager-{{ prometheus_alertmanager_version }}.{{ prometheus_arch }}.tar.gz"
+    dest: "/opt/prometheus/releases/alertmanager-{{ prometheus_alertmanager_version }}.tgz"
+    checksum: "{{ prometheus_alertmanager_checksum }}"
+    owner: root
+    group: prometheus
+    mode: "1750"
+  tags:
+    - prometheus
+    - alertmanager
+
+
+- name: prometheus | alertmanager | extract
+  unarchive:
+    copy: no
+    src: "/opt/prometheus/releases/alertmanager-{{ prometheus_alertmanager_version }}.tgz"
+    dest: "/opt/prometheus/releases"
+    creates: "/opt/prometheus/releases/alertmanager-{{ prometheus_alertmanager_version }}.{{ prometheus_arch }}"
+    owner: root
+    group: prometheus
+    mode: "1750"
+  tags:
+    - prometheus
+    - alertmanager
+    - monitoring
+
+
+- name: prometheus | alertmanager | create link to binary
+  file:
+    src: "/opt/prometheus/releases/alertmanager-{{ prometheus_alertmanager_version }}.{{ prometheus_arch }}/alertmanager"
+    dest: /opt/prometheus/bin/alertmanager
+    state: link
+    owner: root
+    group: prometheus
+    mode: "750"
+  tags:
+    - prometheus
+    - alertmanager
+    - monitoring
+
+
+- name: prometheus | alertmanager | create configuration
+  template:
+    src: "alertmanager.yml.j2"
+    dest: "/etc/prometheus/alertmanager.yml"
+    owner: root
+    group: prometheus
+    mode: "0640"
+  tags:
+    - prometheus
+    - alertmanager
+    - monitoring
+
+
+- name: prometheus | alertmanager | create service unit
+  template:
+    src: "systemd.alertmanager.service.j2"
+    dest: "/etc/systemd/system/alertmanager.service"
+    owner: root
+    group: root
+    mode: "0640"
+  tags:
+    - prometheus
+    - alertmanager
+    - monitoring
+
+- name: prometheus | alertmanager | enable and run
+  service:
+    name: alertmanager
+    state: running
+    enabled: yes
+  tags:
+    - prometheus
+    - alertmanager
+    - monitoring
+    - service

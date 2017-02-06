@@ -1,0 +1,30 @@
+[Unit]
+Description=Prometheus alertmanager service
+After=network.target
+Wants=network.target
+
+[Service]
+ExecStart=/opt/prometheus/bin/alertmanager -config.file=/etc/prometheus/alertmanager.yml -storage.path=/opt/prometheus/data
+Restart=always
+RestartSec=20
+TimeoutSec=300
+# This seems to be the easiest way to ensure we can pull all metrics we want
+SupplymentaryGroups=root
+StandardOutput=journal
+StandardError=journal
+User=prometheus
+Group=prometheus
+ProtectSystem=full
+ProtectHome=yes
+PrivateTmp=yes
+CapabilityBoundingSet=~CAP_SYS_ADMIN
+ReadOnlyPaths=/
+ReadWritePaths=/opt/prometheus/data
+NoNewPrivileges=yes
+CPUAccounting=yes
+MemoryAccounting=yes
+IOAccounting=yes
+TasksAccounting=yes
+
+[Install]
+WantedBy=multi-user.target

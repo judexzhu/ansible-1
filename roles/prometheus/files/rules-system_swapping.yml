@@ -1,0 +1,8 @@
+ALERT SystemSwapping
+  IF node_memory_SwapFree != node_memory_SwapTotal
+  FOR 5m
+  LABELS { severity = "page" }
+  ANNOTATIONS {
+    summary = "Instance {{ $labels.instance }} is swapping ",
+    description = "Node {{ $labels.instance }} is using {{ node_memory_SwapCached }} swap",
+  }

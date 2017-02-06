@@ -1,0 +1,67 @@
+---
+
+- name: prometheus | node_exporter | download
+  get_url:
+    url: "https://github.com/prometheus/node_exporter/releases/download/v{{ prometheus_node_exporter_version }}/node_exporter-{{ prometheus_node_exporter_version }}.{{ prometheus_arch }}.tar.gz"
+    dest: "/opt/prometheus/releases/node_exporter-{{ prometheus_node_exporter_version }}.tgz"
+    checksum: "{{ prometheus_node_exporter_checksum }}"
+    owner: root
+    group: prometheus
+    mode: "1750"
+  tags:
+    - prometheus
+    - node_exporter
+    - monitoring
+
+
+- name: prometheus | node_exporter | extract
+  unarchive:
+    copy: no
+    src: "/opt/prometheus/releases/node_exporter-{{ prometheus_node_exporter_version }}.tgz"
+    dest: "/opt/prometheus/releases"
+    creates: "/opt/prometheus/releases/node_exporter-{{ prometheus_node_exporter_version }}.{{ prometheus_arch }}"
+    owner: root
+    group: prometheus
+    mode: "750"
+  tags:
+    - prometheus
+    - node_exporter
+    - monitoring
+
+
+- name: prometheus | node_exporter | create link to binary
+  file:
+    src: "/opt/prometheus/releases/node_exporter-{{ prometheus_node_exporter_version }}.{{ prometheus_arch }}/node_exporter"
+    dest: /opt/prometheus/bin/node_exporter
+    state: link
+    owner: root
+    group: prometheus
+    mode: "1750"
+  tags:
+    - prometheus
+    - node_exporter
+    - monitoring
+
+
+- name: prometheus | node_exporter | create service unit
+  template:
+    src: "systemd.node_exporter.service.j2"
+    dest: "/etc/systemd/system/node_exporter.service"
+    owner: root
+    group: root
+    mode: "0640"
+  tags:
+    - prometheus
+    - node_exporter
+    - monitoring
+
+- name: prometheus | node_exporter | enable and run
+  service:
+    name: node_exporter
+    state: running
+    enabled: yes
+  tags:
+    - prometheus
+    - node_exporter
+    - monitoring
+    - service
