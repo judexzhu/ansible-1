@@ -60,7 +60,7 @@
     - firewall
 
 - include: suricata.yml
-  when: "'ids' in groups"
+  when: "'ids' in group_names"
 
 - name: fail2ban | service | run and enable
   service:
