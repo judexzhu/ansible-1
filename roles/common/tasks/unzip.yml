@@ -1,0 +1,9 @@
+
+
+- name: common | unzip | install
+  package:
+    name: unzip
+    state: present
+  tags:
+    - common
+    - unzip
