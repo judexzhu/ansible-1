@@ -24,14 +24,13 @@ scrape_configs:
 
   - job_name: "node"
     consul_sd_configs:
-      - server: "localhost:8500"
+      {% for consul_node in groups['consul_server'] %}
+      - server: "{{ consul_node }}:8500"
         services:
           - "node-exporter"
+      {% endfor %}
     file_sd_configs:
       - files:
         - '/etc/prometheus/sd/node_exporter_*.json'
         - '/etc/prometheus/sd/node_exporter_*.yml'
         - '/etc/prometheus/sd/node_exporter_*.yaml'
-    static_configs:
-      - targets:
-        - "localhost:9100"
