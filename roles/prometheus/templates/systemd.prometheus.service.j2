@@ -5,20 +5,21 @@ Wants=network.target
 
 [Service]
 EnvironmentFile=-/etc/sysconfig/prometheus
-ExecStart=/opt/prometheus/bin/prometheus -config.file=/etc/prometheus/prometheus.yml -storage.local.path=/opt/prometheus/data -web.console.templates=/opt/prometheus/releases/current/consoles  -web.console.libraries=/opt/prometheus/releases/current/console_libraries $PROMETHEUS_OPTS
+ExecStart=/opt/prometheus/bin/prometheus -config.file=/etc/prometheus/prometheus.yml $OPTS
+ExecReload=/usr/bin/kill -HUP $MAINPID
 Restart=always
 RestartSec=20
 TimeoutSec=300
 StandardOutput=journal
 StandardError=journal
-User=prometheus
-Group=prometheus
+User={{ prometheus_server_user }}
+Group={{ prometheus_group }}
 ProtectSystem=full
 CapabilityBoundingSet=~CAP_SYS_ADMIN
 ProtectHome=yes
 PrivateTmp=yes
 ReadOnlyPaths=/
-ReadWritePaths=/opt/prometheus/data
+ReadWritePaths={{ prometheus_server_data_path }}
 NoNewPrivileges=yes
 CPUAccounting=yes
 MemoryAccounting=yes

@@ -1,0 +1,11 @@
+{"service":
+  { "name": "prometheus",
+    "tags": [
+      "prometheus",
+      "monitoring",
+      "prometheus-server"
+    ],
+    "port": 9090,
+    "check": {"http": "http://localhost:9090/metrics","interval":"10s"}
+  }
+}

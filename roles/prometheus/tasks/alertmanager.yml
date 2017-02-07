@@ -1,17 +1,38 @@
 ---
 
+- name: prometheus | alertmanager | create user
+  user:
+    name: "{{ prometheus_alertmanager_user }}"
+    group: "{{ prometheus_group }}"
+    home: "{{ prometheus_alertmanager_data_path }}"
+    shell: /sbin/nologin
+    createhome: no
+  tags:
+    - prometheus
+    - alertmanager
+
+- name: prometheus | alertmanager | create data directory
+  file:
+    name: "{{ prometheus_alertmanager_data_path }}"
+    state: directory
+    owner: "{{ prometheus_alertmanager_user }}"
+    group: "{{ prometheus_group }}"
+    mode: "1750"
+  tags:
+    - prometheus
+    - alertmanager
+
 - name: prometheus | alertmanager | download
   get_url:
     url: "https://github.com/prometheus/alertmanager/releases/download/v{{ prometheus_alertmanager_version }}/alertmanager-{{ prometheus_alertmanager_version }}.{{ prometheus_arch }}.tar.gz"
     dest: "/opt/prometheus/releases/alertmanager-{{ prometheus_alertmanager_version }}.tgz"
     checksum: "{{ prometheus_alertmanager_checksum }}"
     owner: root
-    group: prometheus
+    group: "{{ prometheus_group }}"
     mode: "1750"
   tags:
     - prometheus
     - alertmanager
-
 
 - name: prometheus | alertmanager | extract
   unarchive:
@@ -20,13 +41,12 @@
     dest: "/opt/prometheus/releases"
     creates: "/opt/prometheus/releases/alertmanager-{{ prometheus_alertmanager_version }}.{{ prometheus_arch }}"
     owner: root
-    group: prometheus
+    group: "{{ prometheus_group }}"
     mode: "1750"
   tags:
     - prometheus
     - alertmanager
     - monitoring
-
 
 - name: prometheus | alertmanager | create link to binary
   file:
@@ -34,7 +54,7 @@
     dest: /opt/prometheus/bin/alertmanager
     state: link
     owner: root
-    group: prometheus
+    group: "{{ prometheus_group }}"
     mode: "750"
   tags:
     - prometheus
@@ -47,13 +67,14 @@
     src: "alertmanager.yml.j2"
     dest: "/etc/prometheus/alertmanager.yml"
     owner: root
-    group: prometheus
+    group: "{{ prometheus_group }}"
     mode: "0640"
+  notify:
+    - prometheus | alertmanager | reload
   tags:
     - prometheus
     - alertmanager
     - monitoring
-
 
 - name: prometheus | alertmanager | create service unit
   template:
@@ -61,6 +82,18 @@
     dest: "/etc/systemd/system/alertmanager.service"
     owner: root
     group: root
+    mode: "0640"
+  tags:
+    - prometheus
+    - alertmanager
+    - monitoring
+
+- name: prometheus | alertmanager | create sysconfig
+  template:
+    src: sysconfig.alertmanager.j2
+    dest: /etc/sysconfig/alertmanager
+    owner: root
+    group: "{{ prometheus_group }}"
     mode: "0640"
   tags:
     - prometheus
@@ -76,4 +109,21 @@
     - prometheus
     - alertmanager
     - monitoring
+    - service
+
+- name: prometheus | alertmanager | add consul service
+  copy:
+    src: consul-alertmanager.json
+    dest: /etc/consul.d/prometheus-alertmanager.json
+    owner: root
+    group: consul
+    mode: "0640"
+  when: "'consul' in group_names"
+  notify:
+    - consul | service | reload
+  tags:
+    - prometheus
+    - alertmanager
+    - monitoring
+    - consul
     - service

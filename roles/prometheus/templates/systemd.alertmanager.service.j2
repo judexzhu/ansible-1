@@ -4,22 +4,22 @@ After=network.target
 Wants=network.target
 
 [Service]
-ExecStart=/opt/prometheus/bin/alertmanager -config.file=/etc/prometheus/alertmanager.yml -storage.path=/opt/prometheus/data
+EnvironmentFile=-/etc/sysconfig/alertmanager
+ExecStart=/opt/prometheus/bin/alertmanager -config.file=/etc/prometheus/alertmanager.yml $OPTS
+ExecReload=/usr/bin/kill -HUP $MAINPID
 Restart=always
 RestartSec=20
 TimeoutSec=300
-# This seems to be the easiest way to ensure we can pull all metrics we want
-SupplymentaryGroups=root
 StandardOutput=journal
 StandardError=journal
-User=prometheus
-Group=prometheus
+User={{ prometheus_alertmanager_user }}
+Group={{ prometheus_group }}
 ProtectSystem=full
 ProtectHome=yes
 PrivateTmp=yes
 CapabilityBoundingSet=~CAP_SYS_ADMIN
 ReadOnlyPaths=/
-ReadWritePaths=/opt/prometheus/data
+ReadWritePaths={{ prometheus_alertmanager_data_path }}
 NoNewPrivileges=yes
 CPUAccounting=yes
 MemoryAccounting=yes

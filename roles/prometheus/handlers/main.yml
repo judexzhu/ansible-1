@@ -1,0 +1,28 @@
+---
+
+- name: prometheus | server | reload
+  service:
+    name: prometheus
+    state: reloaded
+  tags:
+    - prometheus
+    - server
+    - service
+
+- name: prometheus | node_exporter | reload
+  service:
+    name: node_exporter
+    state: reloaded
+  tags:
+    - prometheus
+    - node_exporter
+    - service
+
+- name: prometheus | alertmanager | reload
+  service:
+    name: alertmanager
+    state: reloaded
+  tags:
+    - prometheus
+    - alertmanager
+    - service

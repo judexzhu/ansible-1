@@ -4,7 +4,9 @@ After=network.target
 Wants=network.target
 
 [Service]
+EnvironmentFile=-/etc/sysconfig/node_exporter
 ExecStart=/opt/prometheus/bin/node_exporter
+ExecReload=/usr/bin/kill -HUP $MAINPID
 Restart=always
 RestartSec=20
 TimeoutSec=300
@@ -12,8 +14,8 @@ TimeoutSec=300
 SupplymentaryGroups=root
 StandardOutput=journal
 StandardError=journal
-User=prometheus
-Group=prometheus
+User={{ prometheus_node_exporter_user }}
+Group={{ prometheus_group }}
 ProtectSystem=full
 ProtectHome=yes
 PrivateTmp=yes

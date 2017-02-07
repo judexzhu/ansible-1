@@ -9,32 +9,23 @@
 
 - name: prometheus | group | create
   group:
-    name: prometheus
+    name: "{{ prometheus_group }}"
     state: present
   tags:
     - prometheus
     - monitoring
 
 
-- name: prometheus | user | create
-  user:
-    name: prometheus
-    group: prometheus
-    state: present
-    home: /opt/prometheus
-    shell: /sbin/nologin
-  tags:
-    - prometheus
-    - monitoring
 
 - name: prometheus | directories | create
   file:
     name: "{{ item }}"
     state: directory
-    owner: prometheus
-    group: prometheus
+    owner: root
+    group: "{{ prometheus_group }}"
     mode: "1750"
   with_items:
+    - /opt/prometheus
     - /opt/prometheus/bin
     - /opt/prometheus/data
     - /opt/prometheus/releases

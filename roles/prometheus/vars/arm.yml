@@ -1,3 +1,2 @@
 prometheus_arch: "linux-armv7"
-
 prometheus_node_exporter_checksum: "sha256:24b99d6cfa2386ae48d9a7ec28f64cf1cd153f4ce7a4b32be7983e6279e9c250"

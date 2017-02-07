@@ -1,11 +1,17 @@
+prometheus_arch: "linux-amd64"
+prometheus_group: "prometheus"
+
 prometheus_server_version: "1.5.0"
 prometheus_server_checksum: "sha256:867e04a78766d3c95d399638bf326b1890117141900cd9730ef61437fd03f9a1"
-prometheus_arch: "linux-amd64"
+prometheus_server_user: prometheus
+prometheus_server_data_path: /opt/prometheus/data/prometheus
 
 prometheus_node_exporter_version: "0.13.0"
 prometheus_node_exporter_checksum: "sha256:2de5d1e51330c41588ed4c88bc531a3d2dccf6b4d7b99d5782d95cff27a3c049"
+prometheus_node_exporter_user: node_exporter
 
 
 prometheus_alertmanager_version: "0.5.1"
 prometheus_alertmanager_checksum: "sha256:9df9f0eb0061c8ead1b89060b851ea389fbdf6c1adc8513b40f6f4b90f4de932"
-
+prometheus_alertmanager_data_path: /opt/prometheus/data/alertmanager
+prometheus_alertmanager_user: alertmanager

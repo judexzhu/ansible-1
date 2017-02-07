@@ -1,5 +1,28 @@
 ---
 
+- name: prometheus | server | create user
+  user:
+    name: "{{ prometheus_server_user }}"
+    group: "{{ prometheus_group }}"
+    home: "{{ prometheus_server_data_path }}"
+    shell: /sbin/nologin
+  tags:
+    - prometheus
+    - prometheus_server
+    - monitoring
+
+- name: prometheus | alertmanager | create data directory
+  file:
+    name: "{{ prometheus_server_data_path }}"
+    state: directory
+    owner: "{{ prometheus_server_user }}"
+    group: "{{ prometheus_group }}"
+    mode: "1750"
+  tags:
+    - prometheus
+    - prometheus_server
+    - monitoring
+
 - name: prometheus | server | download release
   get_url:
     url: "https://github.com/prometheus/prometheus/releases/download/v{{ prometheus_server_version }}/prometheus-{{ prometheus_server_version }}.{{ prometheus_arch }}.tar.gz"
@@ -7,7 +30,7 @@
     checksum: "{{ prometheus_server_checksum }}"
     mode: "0640"
     owner: prometheus
-    group: prometheus
+    group: "{{ prometheus_group }}"
   tags:
     - prometheus
     - prometheus_server
@@ -20,7 +43,7 @@
     dest: "/opt/prometheus/releases"
     creates: "/opt/prometheus/releases/prometheus-{{ prometheus_server_version }}.{{ prometheus_arch }}"
     owner: root
-    group: prometheus
+    group: "{{ prometheus_group }}"
     mode: "1750"
   tags:
     - prometheus
@@ -34,8 +57,12 @@
     dest: /opt/prometheus/releases/current
     state: link
     owner: root
-    group: prometheus
+    group: "{{ prometheus_group }}"
     mode: "1750"
+  tags:
+    - prometheus
+    - prometheus_server
+    - monitoring
 
 
 - name: prometheus | server | create link to binary
@@ -44,16 +71,40 @@
     dest: /opt/prometheus/bin/prometheus
     state: link
     owner: root
-    group: prometheus
+    group: "{{ prometheus_group }}"
     mode: "1750"
+  tags:
+    - prometheus
+    - prometheus_server
+    - monitoring
 
 - name: prometheus | server | create configuration
   template:
     src: "prometheus.yml.j2"
     dest: /etc/prometheus/prometheus.yml
     owner: root
-    group: prometheus
+    group: "{{ prometheus_group }}"
     mode: "0640"
+  notify:
+    - prometheus | server | reload
+  tags:
+    - prometheus
+    - prometheus_server
+    - monitoring
+
+- name: prometheus | server | add basic rules
+  copy:
+    src: "rules/"
+    dest: /etc/prometheus/rules/
+    owner: root
+    group: "{{ prometheus_group }}"
+    mode: "0640"
+  notify:
+    - prometheus | server | reload
+  tags:
+    - prometheus
+    - prometheus_server
+    - monitoring
 
 
 - name: prometheus | server | create service unit
@@ -68,6 +119,17 @@
     - prometheus_server
     - monitoring
 
+- name: prometheus | server | create sysconfig
+  template:
+    src: sysconfig.prometheus.j2
+    dest: /etc/sysconfig/prometheus
+    owner: root
+    group: "{{ prometheus_group }}"
+    mode: "0640"
+  tags:
+    - prometheus
+    - prometheus_server
+    - monitoring
 
 - name: prometheus | server | enable and run
   service:
@@ -78,4 +140,21 @@
     - prometheus
     - prometheus_server
     - monitoring
+    - service
+
+- name: prometheus | server | add consul service
+  copy:
+    src: consul-prometheus.json
+    dest: /etc/consul.d/prometheus-server.json
+    owner: root
+    group: consul
+    mode: "0640"
+  when: "'consul' in group_names"
+  notify:
+    - consul | service | reload
+  tags:
+    - prometheus
+    - server
+    - monitoring
+    - consul
     - service
