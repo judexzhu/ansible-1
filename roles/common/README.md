@@ -62,3 +62,17 @@ Install unzip
 --------------
 
 Needed to extract zip files, e.g. for consul.
+
+
+Create sysconfig directory
+---------------------------
+
+/etc/sysconfig provides a place to store things like environment files for systemd services.
+On RedHat-like systems, it also provides somewhere to stay ifup configs, and other things.
+I believe /etc/default is used on some other distributions.
+
+The LSB (or FHS) is silent on the use of either.
+
+So it seemed easiest to just create /etc/sysconfig if absent, and make other roles use it.
+
+

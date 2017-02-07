@@ -1,0 +1,12 @@
+---
+
+- name: common | sysconfig | create directory
+  file:
+    name: /etc/sysconfig
+    state: directory
+    owner: root
+    group: root
+    mode: "1755"
+  tags:
+    - common
+    - sysconfig
