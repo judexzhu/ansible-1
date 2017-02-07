@@ -1,4 +1,4 @@
-OPTS="-storage.local.path={{ prometheus_server_data_path}} " \
-     "-web.console.templates=/opt/prometheus/releases/current/consoles "\
-     "-web.console.libraries=/opt/prometheus/releases/current/console_libraries " \
-     "-alertmanager.url=http://localhost:9093 "
+OPTS="-storage.local.path={{ prometheus_server_data_path}}" \
+     "-web.console.templates=/opt/prometheus/releases/current/consoles"\
+     "-web.console.libraries=/opt/prometheus/releases/current/console_libraries" \
+     "-alertmanager.url={%- for am in groups['prometheus_alertmanager'] -%}http://{{ am }}:9093,{%- endfor -%}"
