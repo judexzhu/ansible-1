@@ -1,0 +1,12 @@
+---
+
+# By default, this will provision node_exporter, and a consul agent.
+- hosts: all
+  roles:
+    - {role: prometheus, when: "not skip_monitoring|default(False)"}
+
+# Only needed if a server has skip_monitoring set to true
+- hosts: consul_server
+  roles:
+    - consul
+

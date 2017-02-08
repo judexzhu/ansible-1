@@ -1,15 +1,19 @@
 ---
 
+
 - hosts: all
   roles:
     - {role: selinux, when: "ansible_os_family == 'RedHat'"}
     - common
     - hardening
-    - firewalld
-    - {role: suricata, when: "'ids' in groups"}
+    - {role: firewalld, when: "not skip_firewalld | default(False)"}
     - fail2ban
     - openssh
-    - auditd
-    - sysdig
+    - {role: auditd, when: "not skip_auditd | default(False)"}
+    - {role: sysdig, when: "not skip_sysdig | default(False)"}
     - docker
 
+- hosts: ids
+  roles:
+    - suricata
+    - fail2ban

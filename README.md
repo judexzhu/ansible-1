@@ -11,6 +11,37 @@ These are part of the common playbook (playbooks/common.yml), which is applied t
 
 All roles (will eventually) come with a README that details their functionality.
 
+default profile
+-----------------
+
+Currently, calling ansible-playbook, and using the included site.yml, will:
+
+* do some basic setup and hardening (see common and hardening roles)
+* install firewalld and fail2ban
+* install auditd
+* install docker (for RedHat-likes, it will use the docker repo, rather than EPEL).
+* install rkhunter, sysdig, and falco
+* tighten up the SSH server
+* install and configure selinux to enforcing mode
+* install prometheus' node_exporter
+
+The following switches exist to skip parts of this
+
+* skip_auditd
+* skip_firewalld
+* skip_sysdig
+* skip_monitoring (which currently skips prometheus)
+
+Additionally, it can:
+
+* for hosts in the 'consul' group, install consul and run it as an agent, to advertise services running on the node
+* for hosts in the 'ids' group, configure suricata, and configure fail2ban to use its logs.
+* for hosts in the 'consul_server' group, configure consul in server mode, and install the UI.
+* for hosts in the 'prometheus_server' group, configure prometheus, and advertise it with consul.
+* for hosts in the 'prometheus_alertmanager' group, configure prometheus' alertmanager, and advertise it with consul.
+
+You can ignore/avoid all service (i.e. systemd) related calls with `--skip-tags service`.
+This aims to help use the roles in docker containers.
 
 License
 --------
