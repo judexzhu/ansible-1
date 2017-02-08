@@ -1,5 +1,6 @@
 docker_packages:
   - docker-engine
   - docker-engine-selinux
+  - python-docker-py
 
 docker_service_name: docker
