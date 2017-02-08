@@ -52,13 +52,11 @@
     owner: root
     group: consul
   register: consul_version_changed
-  changed_when: false
   notify:
     - consul | service | restart
   tags:
     - consul
     - monitoring
-
 
 - name: consul | release | extract
   unarchive:
@@ -69,7 +67,7 @@
     group: consul
     mode: "1750"
     force: yes
-  when: "consul_version_changed | default(False)"
+  when: consul_version_changed | changed
   tags:
     - consul
     - monitoring

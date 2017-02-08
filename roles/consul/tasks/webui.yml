@@ -8,7 +8,6 @@
     owner: root
     group: consul
   register: consul_ui_version_changed
-  changed_when: false
   tags:
     - consul
     - monitoring
@@ -25,7 +24,7 @@
     group: consul
     mode: "1750"
     force: yes
-  when: "consul_ui_version_changed | default(False)"
+  when: "consul_ui_version_changed | changed"
   tags:
     - consul
     - monitoring
