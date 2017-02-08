@@ -1,0 +1,114 @@
+---
+
+- include_vars: arm.yml
+  when: "'arm' in ansible_architecture"
+  tags:
+    - consul
+    - monitoring
+
+- name: consul | group | create
+  group:
+    name: consul
+    state: present
+  tags:
+    - consul
+    - monitoring
+
+- name: consul | user | create
+  user:
+    name: consul
+    state: present
+    group: consul
+    shell: /sbin/nologin
+    home: /opt/consul
+  tags:
+    - consul
+    - monitoring
+
+
+- name: consul | directories | create
+  file:
+    name: "{{ item }}"
+    state: directory
+    owner: consul
+    group: consul
+    mode: "1750"
+  with_items:
+    - /etc/consul.d
+    - /opt/consul/releases
+    - /opt/consul/bin/
+    - /opt/consul/data
+    - /opt/consul/webui
+  tags:
+    - consul
+    - monitoring
+
+
+- name: consul | release | download
+  get_url:
+    url: "https://releases.hashicorp.com/consul/{{ consul_version }}/consul_{{ consul_version }}_{{ consul_arch }}.zip"
+    dest: "/opt/consul/releases/consul-{{ consul_version }}.zip"
+    checksum: "{{ consul_checksum }}"
+    owner: root
+    group: consul
+  register: consul_version_changed
+  changed_when: false
+  notify:
+    - consul | service | restart
+  tags:
+    - consul
+    - monitoring
+
+
+- name: consul | release | extract
+  unarchive:
+    copy: no
+    src: "/opt/consul/releases/consul-{{ consul_version }}.zip"
+    dest: "/opt/consul/bin"
+    owner: root
+    group: consul
+    mode: "1750"
+    force: yes
+  when: "consul_version_changed | default(False)"
+  tags:
+    - consul
+    - monitoring
+
+
+
+- name: consul | agent | create service unit
+  template:
+    src: "systemd.consul.service.j2"
+    dest: "/etc/systemd/system/consul.service"
+    owner: root
+    group: root
+    mode: "0640"
+  tags:
+    - consul
+    - monitoring
+
+- name: consul | agent | create sysconfig
+  template:
+    src: "sysconfig.consul.j2"
+    dest: "/etc/sysconfig/consul"
+    owner: root
+    group: consul
+    mode: "0640"
+  notify:
+    - consul | service | restart
+  tags:
+    - consul
+    - monitoring
+
+- include: webui.yml
+  when: "'consul_server' in group_names"
+
+- name: consul | server | enable and run
+  service:
+    name: consul
+    state: running
+    enabled: yes
+  tags:
+    - consul
+    - monitoring
+    - service

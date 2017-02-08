@@ -1,0 +1,11 @@
+OPTS='-domain={{ consul_domain }}' \
+  '-datacenter={{ consul_datacenter }}' \
+  '-bind={{ consul_address }}' \
+{% if 'consul_server' in group_names %}
+  '-bootstrap-expect={{ groups["consul_server"] | length }}' \
+  '-server' \
+  '-ui-dir=/opt/consul/webui' \
+  '-ui'
+{% else %}
+  '-join={{ groups["consul_server"] | join(",") }}'
+{%- endif -%}

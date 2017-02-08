@@ -1,0 +1,31 @@
+---
+
+- name: consul | webui | download
+  get_url:
+    url: "https://releases.hashicorp.com/consul/{{ consul_version }}/consul_{{ consul_version }}_web_ui.zip"
+    dest: "/opt/consul/releases/consul-{{ consul_version }}-webui.zip"
+    checksum: "{{ consul_webui_checksum }}"
+    owner: root
+    group: consul
+  register: consul_ui_version_changed
+  changed_when: false
+  tags:
+    - consul
+    - monitoring
+
+
+
+- name: consul | webui | extract
+  unarchive:
+    copy: no
+    src: "/opt/consul/releases/consul-{{ consul_version }}-webui.zip"
+    dest: "/opt/consul/webui"
+    creates: "/opt/consul/webui/index.html"
+    owner: root
+    group: consul
+    mode: "1750"
+    force: yes
+  when: "consul_ui_version_changed | default(False)"
+  tags:
+    - consul
+    - monitoring

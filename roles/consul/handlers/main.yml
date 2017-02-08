@@ -1,0 +1,21 @@
+---
+
+- name: consul | service | reload
+  service:
+    name: consul
+    state: reloaded
+  tags:
+    - consul
+    - service
+
+- name: consul | service | restart
+  service:
+    name: consul
+    state: restarted
+  tags:
+    - consul
+    - service
+
+
+
+

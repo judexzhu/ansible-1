@@ -1,0 +1,29 @@
+[Unit]
+Description=Consul service
+After=network.target
+Wants=network.target
+
+[Service]
+EnvironmentFile=-/etc/sysconfig/consul
+ExecStart=/opt/consul/bin/consul agent -config-dir=/etc/consul.d -data-dir=/opt/consul/data $OPTS
+ExecReload=/usr/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=20
+TimeoutSec=300
+StandardOutput=journal
+StandardError=journal
+User=consul
+Group=consul
+ProtectSystem=full
+ProtectHome=yes
+PrivateTmp=yes
+NoNewPrivileges=yes
+CPUAccounting=yes
+MemoryAccounting=yes
+IOAccounting=yes
+TasksAccounting=yes
+ReadOnlyPaths=/
+ReadWritePaths=/opt/consul/data
+
+[Install]
+WantedBy=multi-user.target
