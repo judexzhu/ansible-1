@@ -18,6 +18,7 @@
     owner: root
     group: "{{ prometheus_group }}"
     mode: "1750"
+  register: prometheus_node_exporter_changed
   tags:
     - prometheus
     - node_exporter
@@ -47,6 +48,10 @@
     owner: root
     group: "{{ prometheus_group }}"
     mode: "1750"
+    force: yes
+  when: prometheus_node_exporter_changed|changed
+  notify:
+    - prometheus | node_exporter | restart
   tags:
     - prometheus
     - node_exporter

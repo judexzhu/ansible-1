@@ -26,3 +26,31 @@
     - prometheus
     - alertmanager
     - service
+
+
+- name: prometheus | server | restart
+  service:
+    name: prometheus
+    state: restarted
+  tags:
+    - prometheus
+    - server
+    - service
+
+- name: prometheus | node_exporter | restart
+  service:
+    name: node_exporter
+    state: restarted
+  tags:
+    - prometheus
+    - node_exporter
+    - service
+
+- name: prometheus | alertmanager | restart
+  service:
+    name: alertmanager
+    state: restarted
+  tags:
+    - prometheus
+    - alertmanager
+    - service

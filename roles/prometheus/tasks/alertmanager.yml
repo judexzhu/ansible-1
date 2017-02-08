@@ -30,6 +30,7 @@
     owner: root
     group: "{{ prometheus_group }}"
     mode: "1750"
+  register: prometheus_alertmanaged_changed
   tags:
     - prometheus
     - alertmanager
@@ -56,6 +57,9 @@
     owner: root
     group: "{{ prometheus_group }}"
     mode: "750"
+  when: prometheus_alertmanaged_changed|changed
+  notify:
+    - prometheus | alertmanager | restart
   tags:
     - prometheus
     - alertmanager

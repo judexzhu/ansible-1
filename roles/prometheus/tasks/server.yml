@@ -31,6 +31,7 @@
     mode: "0640"
     owner: prometheus
     group: "{{ prometheus_group }}"
+  register: prometheus_server_changed
   tags:
     - prometheus
     - prometheus_server
@@ -71,8 +72,12 @@
     dest: /opt/prometheus/bin/prometheus
     state: link
     owner: root
+    force: yes
     group: "{{ prometheus_group }}"
     mode: "1750"
+  when: prometheus_server_changed|changed
+  notify:
+    - prometheus | server | restart
   tags:
     - prometheus
     - prometheus_server
