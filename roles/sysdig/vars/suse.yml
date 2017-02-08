@@ -1,0 +1,2 @@
+# Falco cannot be installed via package manager on SUSE currently
+sysdig_include_falco: no

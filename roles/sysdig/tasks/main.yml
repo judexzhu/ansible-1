@@ -1,7 +1,14 @@
 ---
 
-- include: redhat.yml
+- include_vars: "{{ ansible_os_family | lower }}.yml"
+  ignore_errors: yes
+  tags:
+    - sysdig
+
+- include: yum.yml
   when: "ansible_os_family == 'RedHat'"
+  tags:
+    - sysdig
 
 - name: sysdig | packages | install
   package:
