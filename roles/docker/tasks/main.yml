@@ -5,8 +5,10 @@
   tags:
     - docker
 
-- include: redhat.yml
+- include: yum.yml
   when: "ansible_os_family == 'RedHat'"
+  tags:
+    - docker
 
 - name: docker | packages | install
   package:
