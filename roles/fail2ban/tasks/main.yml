@@ -1,7 +1,10 @@
 ---
 
-- include_vars: suse.yml
-  when: "ansible_os_family == 'Suse'"
+- include_vars: "{{ ansible_os_family | lower }}.yml"
+  ignore_errors: yes
+  tags:
+    - fail2ban
+    - firewall
 
 - name: fail2ban | config | create directory
   file:
