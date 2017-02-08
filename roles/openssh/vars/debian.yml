@@ -1,4 +1,3 @@
 sshd_home: /var/run/sshd
-
-
+sshd_server_pkg: openssh-server
 sshd_service_name: ssh

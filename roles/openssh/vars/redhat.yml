@@ -1,1 +1,2 @@
 sshd_home: /var/empty/sshd
+sshd_server_pkg: "openssh-server"
