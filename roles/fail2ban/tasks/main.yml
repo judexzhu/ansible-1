@@ -1,5 +1,8 @@
 ---
 
+- include_vars: suse.yml
+  when: "ansible_os_family == 'Suse'"
+
 - name: fail2ban | config | create directory
   file:
     name: "{{ item }}"
@@ -21,10 +24,7 @@
   package:
     name: "{{ item }}"
     state: present
-  with_items:
-    - fail2ban
-    - fail2ban-systemd
-    - fail2ban-firewalld
+  with_items: "{{ fail2ban_packages }}"
   tags:
     - fail2ban
     - firewall
