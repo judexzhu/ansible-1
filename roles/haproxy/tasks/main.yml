@@ -1,0 +1,17 @@
+---
+
+- name: haproxy | packages | install
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ haproxy_packages }}"
+  tags:
+    - haproxy
+
+- name: haproxy | service | enable and run
+  service:
+    name: haproxy
+    state: running
+    enabled: yes
+  tags:
+    - haproxy
