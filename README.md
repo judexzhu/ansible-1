@@ -31,6 +31,7 @@ The following switches exist to skip parts of this
 * skip_firewalld
 * skip_sysdig
 * skip_monitoring (which currently skips prometheus)
+* skip_docker
 
 Additionally, it can:
 

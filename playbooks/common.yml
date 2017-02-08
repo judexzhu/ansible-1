@@ -11,7 +11,7 @@
     - openssh
     - {role: auditd, when: "not skip_auditd | default(False)"}
     - {role: sysdig, when: "not skip_sysdig | default(False)"}
-    - docker
+    - {role: docker, when: "not skip_docker | default(False)"}
 
 - hosts: ids
   roles:
