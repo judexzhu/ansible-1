@@ -27,6 +27,15 @@
     - alertmanager
     - service
 
+- name: prometheus | haproxy_exporter | reload
+  service:
+    name: haproxy_exporter
+    state: reloaded
+  tags:
+    - prometheus
+    - haproxy_exporter
+    - service
+
 
 - name: prometheus | server | restart
   service:
@@ -53,4 +62,13 @@
   tags:
     - prometheus
     - alertmanager
+    - service
+
+- name: prometheus | haproxy_exporter | restart
+  service:
+    name: haproxy_exporter
+    state: restarted
+  tags:
+    - prometheus
+    - haproxy_exporter
     - service

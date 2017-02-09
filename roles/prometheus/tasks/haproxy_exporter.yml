@@ -1,0 +1,111 @@
+---
+
+- name: prometheus | haproxy_exporter | create user
+  user:
+    name: "{{ prometheus_haproxy_exporter_user }}"
+    group: "{{ prometheus_group }}"
+    home: /opt/prometheus/exporters/haproxy_exporter
+    shell: /sbin/nologin
+  tags:
+    - prometheus
+    - haproxy_exporter
+
+- name: prometheus | haproxy_exporter | download
+  get_url:
+    url: "https://github.com/prometheus/haproxy_exporter/releases/download/v{{ prometheus_haproxy_exporter_version }}/haproxy_exporter-{{ prometheus_haproxy_exporter_version }}.{{ prometheus_arch }}.tar.gz"
+    dest: "/opt/prometheus/releases/haproxy_exporter-{{ prometheus_haproxy_exporter_version }}.tgz"
+    checksum: "{{ prometheus_haproxy_exporter_checksum }}"
+    owner: root
+    group: "{{ prometheus_group }}"
+    mode: "1750"
+  register: prometheus_haproxy_exporter_changed
+  tags:
+    - prometheus
+    - haproxy_exporter
+    - monitoring
+
+
+- name: prometheus | haproxy_exporter | extract
+  unarchive:
+    copy: no
+    src: "/opt/prometheus/releases/haproxy_exporter-{{ prometheus_haproxy_exporter_version }}.tgz"
+    dest: "/opt/prometheus/releases"
+    creates: "/opt/prometheus/releases/haproxy_exporter-{{ prometheus_haproxy_exporter_version }}.{{ prometheus_arch }}"
+    owner: root
+    group: "{{ prometheus_group }}"
+    mode: "750"
+  tags:
+    - prometheus
+    - haproxy_exporter
+    - monitoring
+
+
+- name: prometheus | haproxy_exporter | create link to binary
+  file:
+    src: "/opt/prometheus/releases/haproxy_exporter-{{ prometheus_haproxy_exporter_version }}.{{ prometheus_arch }}/haproxy_exporter"
+    dest: /opt/prometheus/bin/haproxy_exporter
+    state: link
+    owner: root
+    group: "{{ prometheus_group }}"
+    mode: "1750"
+    force: yes
+  when: prometheus_haproxy_exporter_changed|changed
+  notify:
+    - prometheus | haproxy_exporter | restart
+  tags:
+    - prometheus
+    - haproxy_exporter
+    - monitoring
+
+- name: prometheus | haproxy_exporter | create service unit
+  template:
+    src: "systemd.haproxy_exporter.service.j2"
+    dest: "/etc/systemd/system/haproxy_exporter.service"
+    owner: root
+    group: root
+    mode: "0640"
+  tags:
+    - prometheus
+    - haproxy_exporter
+    - monitoring
+
+- name: prometheus | haproxy_exporter | create sysconfig
+  template:
+    src: sysconfig.haproxy_exporter.j2
+    dest: /etc/sysconfig/haproxy_exporter
+    owner: root
+    group: "{{ prometheus_group }}"
+    mode: "0640"
+  tags:
+    - prometheus
+    - haproxy_exporter
+    - monitoring
+
+
+- name: prometheus | haproxy_exporter | enable and run
+  service:
+    name: haproxy_exporter
+    state: running
+    enabled: yes
+  tags:
+    - prometheus
+    - haproxy_exporter
+    - monitoring
+    - service
+
+- name: prometheus | haproxy_exporter | add consul service
+  copy:
+    src: consul-haproxy_exporter.json
+    dest: /etc/consul.d/prometheus-haproxy_exporter.json
+    owner: root
+    group: consul
+    mode: "0640"
+  when: "'consul' in group_names"
+  notify:
+    - consul | service | reload
+  tags:
+    - prometheus
+    - haproxy_exporter
+    - monitoring
+    - consul
+    - service

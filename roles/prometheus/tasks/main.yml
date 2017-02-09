@@ -47,5 +47,7 @@
 - include: alertmanager.yml
   when: "'prometheus_alertmanager' in group_names"
 
-
 - include: node_exporter.yml
+
+- include: haproxy_exporter.yml
+  when: "'load_balancer' in group_names"

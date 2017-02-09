@@ -1,8 +1,8 @@
 ALERT DiskFilling
-  IF delta(node_filesystem_avail{fstype!="proc",fstype!="tmpfs"}[1d]) * 14 >= node_filesystem_avail
+  IF delta(node_filesystem_avail{fstype!="proc",fstype!="rpc_pipefs",fstype!="tmpfs"}[1d]) * 14 >= node_filesystem_avail
   FOR 30m
-  LABELS { severity = "page" }
+  LABELS { severity = "warn" }
   ANNOTATIONS {
-    summary = "Instance {{ $labels.instance }} disk {{ $labels.device }} will be full in14 days",
+    summary = "Instance {{ $labels.instance }} disk {{ $labels.device }} will be full in 14 days",
     description = "Current storage usage for {{ $labels.instance }} disk {{ $labels.device }} will fill disk within 14 days",
   }

@@ -1,0 +1,8 @@
+ALERT HighTcpRestransmitRate
+  IF  irate(node_netstat_Tcp_RetransSegs[1m])/irate(node_netstat_Tcp_InSegs[5m]) > 0.3
+  FOR 10m
+  LABELS { severity = "page" }
+  ANNOTATIONS {
+    summary = "Instance {{ $labels.instance }} has high TCP retransmits ({{ $value * 100 }}%)",
+    description = "{{ $labels.instance }} has high 5 minute TCP retransmit rate ({{ $value * 100 }}%) for the last 10 minutes",
+  }

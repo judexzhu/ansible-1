@@ -1,0 +1,32 @@
+[Unit]
+Description=Prometheus HAproxy exporter service
+After=network.target
+Wants=network.target
+
+[Service]
+EnvironmentFile=-/etc/sysconfig/haproxy_exporter
+ExecStart=/opt/prometheus/bin/haproxy_exporter $URL
+ExecReload=/usr/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=20
+TimeoutSec=300
+# This seems to be the easiest way to ensure we can pull all metrics we want
+SupplymentaryGroups=haproxy
+StandardOutput=journal
+StandardError=journal
+User={{ prometheus_haproxy_exporter_user }}
+Group={{ prometheus_group }}
+ProtectSystem=full
+ProtectHome=yes
+PrivateTmp=yes
+CapabilityBoundingSet=~CAP_SYS_ADMIN
+ReadOnlyPaths=/
+ReadWritePaths=/var/lib/haproxy/stats
+NoNewPrivileges=yes
+CPUAccounting=yes
+MemoryAccounting=yes
+IOAccounting=yes
+TasksAccounting=yes
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,11 @@
+{"service":
+  { "name": "haproxy-exporter",
+    "tags": [
+      "prometheus",
+      "monitoring",
+      "haproxy-exporter"
+    ],
+    "port": 9101,
+    "check": {"http": "http://localhost:9101/metrics","interval":"10s"}
+  }
+}

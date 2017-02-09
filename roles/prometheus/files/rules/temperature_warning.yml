@@ -1,0 +1,8 @@
+ALERT TemperatureWarning
+  IF max(node_hwmon_temp_celsius) / node_hwmon_temp_max_celsius > 0.7
+  FOR 30m
+  LABELS { severity = "warn" }
+  ANNOTATIONS {
+    summary = "Instance {{ $labels.instance }} is at {{ $value }}% of max temp ",
+    description = "{{ $labels.instance }} hardware is at {{ $value }}% of its maximum temperature ",
+  }

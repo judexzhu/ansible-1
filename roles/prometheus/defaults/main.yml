@@ -15,3 +15,9 @@ prometheus_alertmanager_version: "0.5.1"
 prometheus_alertmanager_checksum: "sha256:9df9f0eb0061c8ead1b89060b851ea389fbdf6c1adc8513b40f6f4b90f4de932"
 prometheus_alertmanager_data_path: /opt/prometheus/data/alertmanager
 prometheus_alertmanager_user: alertmanager
+
+prometheus_haproxy_exporter_version: "0.7.1"
+prometheus_haproxy_exporter_checksum: "sha256:25426aafa337e717e04af1d0de15ea8848a63342a609019a539df3e937699f1a"
+prometheus_haproxy_exporter_data_path: /opt/prometheus/data/haproxy_exporter
+prometheus_haproxy_exporter_user: haproxy_exporter
+prometheus_haproxy_exporter_uri: "unix:///var/lib/haproxy/stats"
