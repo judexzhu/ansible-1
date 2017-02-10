@@ -8,4 +8,5 @@ OPTS='-domain={{ consul_domain }}' \
   '-ui' \
   '-client={{ consul_address }}' \
 {%- endif -%}
-  '-join={{ groups["consul_server"] | join(",") }}'
+  '-join={{ consul_servers | join(",") }}' \
+  '-rejoin'
