@@ -5,7 +5,7 @@ Wants=network.target
 
 [Service]
 EnvironmentFile=-/etc/sysconfig/consul
-ExecStart=/opt/consul/bin/consul agent -config-dir=/etc/consul.d -data-dir=/opt/consul/data $OPTS
+ExecStart=/opt/consul/bin/consul agent -config-file=/etc/consul/config.json -config-dir=/etc/consul/consul.d/ $OPTS
 ExecReload=/usr/bin/kill -HUP $MAINPID
 Restart=always
 RestartSec=20

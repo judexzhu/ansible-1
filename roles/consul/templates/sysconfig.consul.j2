@@ -3,10 +3,10 @@ OPTS='-domain={{ consul_domain }}' \
   '-bind={{ consul_address }}' \
 {% if 'consul_server' in group_names %}
   '-server' \
-  '-bootstrap-expect={{ groups["consul_server"] | length }}' \
+  '-bootstrap-expect={{ consul_servers | length }}' \
   '-ui-dir=/opt/consul/webui' \
   '-ui' \
   '-client={{ consul_address }}' \
-{%- endif -%}
+{% endif %}
   '-join={{ consul_servers | join(",") }}' \
   '-rejoin'

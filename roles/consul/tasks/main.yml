@@ -34,14 +34,17 @@
     group: consul
     mode: "1750"
   with_items:
-    - /etc/consul.d
+    - /etc/consul
+    - /etc/consul/consul.d
     - /opt/consul/releases
     - /opt/consul/bin/
-    - /opt/consul/data
     - /opt/consul/webui
+    - "{{ consul_data_dir }}"
   tags:
     - consul
     - monitoring
+
+
 
 
 - name: consul | release | download
@@ -85,10 +88,10 @@
     - consul
     - monitoring
 
-- name: consul | agent | create sysconfig
+- name: consul | agent | create config
   template:
-    src: "sysconfig.consul.j2"
-    dest: "/etc/sysconfig/consul"
+    src: "config.json.j2"
+    dest: "/etc/consul/config.json"
     owner: root
     group: consul
     mode: "0640"
@@ -99,7 +102,9 @@
     - monitoring
 
 - include: webui.yml
-  when: "'consul_server' in group_names"
+  when: "consul_server"
+- include: firewalld.yml
+  when: "not skip_firewalld"
 
 - name: consul | server | enable and run
   service:

@@ -1,0 +1,25 @@
+{
+"domain": "{{consul_domain}}",
+"data_dir": "{{consul_data_dir}}",
+"datacenter": "{{consul_datacenter}}",
+"advertise_addr": "{{consul_address}}",
+"start_join": {{ consul_servers | to_json }},
+"retry_join": {{ consul_servers | to_json }},
+{% if consul_key %}
+"encrypt": "{{ consul_key }}",
+{% endif %}
+{% if 'consul_server' in group_names %}
+"server": true,
+"ui_dir": "/opt/consul/webui",
+"ui": true,
+"bootstrap_expect": {{ consul_servers | length }},
+"client_addr": "0.0.0.0",
+{% endif %}
+{% if consul_config %}
+{{ consul_config | to_json }},
+{% endif %}
+"tls_min_version": "tls12",
+"disable_anonymous_signature": true,
+"disable_update_check": true,
+"disable_remote_exec": true
+}

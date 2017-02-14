@@ -1,0 +1,45 @@
+---
+
+- name: consul | firewall | create rule for lan traffic
+  firewalld:
+    port: "{{ item }}"
+    state: enabled
+    permanent: yes
+    immediate: yes
+  when: "not skip_firewalld"
+  with_items:
+    - "8301/udp"
+    - "8301/tcp"
+  tags:
+    - consul
+    - firewall
+
+- name: consul | firewall | create rule for wan traffic
+  firewalld:
+    port: "{{ item }}"
+    state: enabled
+    permanent: yes
+    immediate: yes
+  when: "consul_server and not skip_firewalld"
+  with_items:
+    - "8302/udp"
+    - "8302/tcp"
+  tags:
+    - consul
+    - firewall
+
+- name: consul | firewall | create rule for server traffic
+  firewalld:
+    port: "{{ item }}"
+    state: enabled
+    permanent: yes
+    immediate: yes
+  when: "consul_server and not skip_firewalld"
+  with_items:
+    - "8300/tcp"
+    - "8500/tcp"
+    - "8600/udp"
+    - "8600/tcp"
+  tags:
+    - consul
+    - firewall
