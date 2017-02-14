@@ -1,0 +1,70 @@
+---
+
+- name: prometheus | server | add consul service
+  template:
+    src: consul.prometheus.json.j2
+    dest: "{{ consul_config_dir }}/prometheus-server.json"
+    owner: root
+    group: consul
+    mode: "0640"
+  when: "'consul' in group_names and prometheus_server"
+  notify:
+    - consul | service | reload
+  tags:
+    - prometheus
+    - server
+    - monitoring
+    - consul
+    - service
+
+- name: prometheus | alertmanager | add consul service
+  copy:
+    src: consul-alertmanager.json
+    dest: "{{ consul_config_dir }}/prometheus-alertmanager.json"
+    owner: root
+    group: consul
+    mode: "0640"
+  when: "'consul' in group_names and prometheus_alertmanager"
+  notify:
+    - consul | service | reload
+  tags:
+    - prometheus
+    - alertmanager
+    - monitoring
+    - consul
+    - service
+
+
+- name: prometheus | haproxy_exporter | add consul service
+  copy:
+    src: consul-haproxy_exporter.json
+    dest: "{{ consul_config_dir }}/prometheus-haproxy_exporter.json"
+    owner: root
+    group: consul
+    mode: "0640"
+  when: "'consul' in group_names and prometheus_haproxy_exporter"
+  notify:
+    - consul | service | reload
+  tags:
+    - prometheus
+    - haproxy_exporter
+    - monitoring
+    - consul
+    - service
+
+- name: prometheus | node_exporter | add consul service
+  copy:
+    src: consul-node_exporter.json
+    dest: "{{ consul_config_dir }}/prometheus-node_exporter.json"
+    owner: root
+    group: consul
+    mode: "0640"
+  when: "'consul' in group_names"
+  notify:
+    - consul | service | reload
+  tags:
+    - prometheus
+    - node_exporter
+    - monitoring
+    - consul
+    - service

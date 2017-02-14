@@ -93,19 +93,3 @@
     - monitoring
     - service
 
-- name: prometheus | haproxy_exporter | add consul service
-  copy:
-    src: consul-haproxy_exporter.json
-    dest: /etc/consul.d/prometheus-haproxy_exporter.json
-    owner: root
-    group: consul
-    mode: "0640"
-  when: "'consul' in group_names"
-  notify:
-    - consul | service | reload
-  tags:
-    - prometheus
-    - haproxy_exporter
-    - monitoring
-    - consul
-    - service

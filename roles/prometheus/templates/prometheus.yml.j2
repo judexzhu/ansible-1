@@ -38,6 +38,22 @@ scrape_configs:
         - '/etc/prometheus/sd/node_exporter_*.yml'
         - '/etc/prometheus/sd/node_exporter_*.yaml'
 
+  - job_name: etcd-peer
+    consul_sd_configs:
+    {% for consul_node in groups['consul_server'] %}
+
+      - server: "{{ consul_node }}:8500"
+        services:
+          - "etcd-peer"
+
+    {% endfor %}
+
+    file_sd_configs:
+      - files:
+        - '/etc/prometheus/sd/etcd_peer_*.json'
+        - '/etc/prometheus/sd/etcd_peer_*.yml'
+        - '/etc/prometheus/sd/etcd_peer_*.yaml'
+
   - job_name: "haproxy"
     consul_sd_configs:
     {% for consul_node in groups['consul_server'] %}

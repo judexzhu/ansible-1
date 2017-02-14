@@ -45,9 +45,12 @@
   when: "'prometheus_server' in group_names"
 
 - include: alertmanager.yml
-  when: "'prometheus_alertmanager' in group_names"
+  when: "prometheus_alertmanager"
 
 - include: node_exporter.yml
 
 - include: haproxy_exporter.yml
-  when: "'load_balancer' in group_names"
+  when: "prometheus_haproxy_exporter"
+
+- include: consul.yml
+  when: "'consul' in group_names"

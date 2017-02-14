@@ -11,7 +11,7 @@
     - prometheus_server
     - monitoring
 
-- name: prometheus | alertmanager | create data directory
+- name: prometheus | server | create data directory
   file:
     name: "{{ prometheus_server_data_path }}"
     state: directory
@@ -147,19 +147,4 @@
     - monitoring
     - service
 
-- name: prometheus | server | add consul service
-  copy:
-    src: consul-prometheus.json
-    dest: /etc/consul.d/prometheus-server.json
-    owner: root
-    group: consul
-    mode: "0640"
-  when: "'consul' in group_names"
-  notify:
-    - consul | service | reload
-  tags:
-    - prometheus
-    - server
-    - monitoring
-    - consul
-    - service
+

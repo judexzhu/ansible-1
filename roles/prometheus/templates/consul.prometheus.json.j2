@@ -6,7 +6,7 @@
       "prometheus-server"
     ],
     "address": "{{prometheus_server_listen_address}}",
-    "port": "{{prometheus_server_listen_port}}",
+    "port": {{prometheus_server_listen_port}},
     "check": {"http": "http://{{prometheus_server_listen_address}}:{{prometheus_server_listen_port}}/metrics","interval":"10s"}
   }
 }

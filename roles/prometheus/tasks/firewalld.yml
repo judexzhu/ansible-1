@@ -1,0 +1,43 @@
+---
+
+- name: prometheus| firewall | node exporter
+  firewalld:
+    port: "{{ item }}"
+    state: enabled
+    permanent: yes
+    immediate: yes
+  when: "not skip_firewalld"
+  with_items:
+    - "9100/tcp"
+  tags:
+    - prometheus
+    - node_exporter
+    - firewall
+
+- name: prometheus| firewall | haproxy exporter
+  firewalld:
+    port: "{{ item }}"
+    state: enabled
+    permanent: yes
+    immediate: yes
+  when: "not skip_firewalld and prometheus_haproxy_exporter"
+  with_items:
+    - "9091/tcp"
+  tags:
+    - prometheus
+    - haproxy_exporter
+    - firewall
+
+- name: prometheus| firewall | alertmanager
+  firewalld:
+    port: "{{ item }}"
+    state: enabled
+    permanent: yes
+    immediate: yes
+  when: "not skip_firewalld and prometheus_alertmanager"
+  with_items:
+    - "9093/tcp"
+  tags:
+    - prometheus
+    - alertmanager
+    - firewall
