@@ -1,0 +1,6 @@
+grafana_arch: "linux-x64"
+grafana_checksum: b8111cd014e9c202dd1b168b924731a140161e9e43e32f3ca7ae18db850af6c4
+grafana_version: "4.1.2-1486989747"
+
+grafana_listen_address: "{{ ansible_default_ipv4['address'] }}"
+grafana_listen_port: 9090

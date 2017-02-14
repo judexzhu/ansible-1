@@ -1,0 +1,14 @@
+[paths]
+data = /opt/grafana/data
+logs = /var/log/grafana
+plugins = /opt/grafana/plugins
+
+[server]
+# Protocol (http or https)
+protocol = http
+
+# The ip address to bind to, empty will bind to all interfaces
+http_addr = {{ grafana_listen_address }}
+
+# The http port  to use
+http_port = {{ grafana_listen_port }}

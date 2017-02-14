@@ -1,0 +1,14 @@
+---
+
+- name: grafana | firewall | create rule
+  firewalld:
+    port: "{{ item }}"
+    state: enabled
+    permanent: yes
+    immediate: yes
+  when: "not skip_firewalld"
+  with_items:
+    - "{{ grafana_listen_port }}/tcp"
+  tags:
+    - grafana
+    - firewall

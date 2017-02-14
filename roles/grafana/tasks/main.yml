@@ -1,0 +1,122 @@
+---
+
+- name: grafana | group | create
+  group:
+    name: grafana
+    state: present
+  tags:
+    - grafana
+
+- name: grafana | user | create
+  user:
+    name: grafana
+    state: present
+    group: grafana
+    home: /opt/grafana
+    shell: /sbin/nologin
+  tags:
+    - grafana
+
+- name: grafana | directories | create
+  file:
+    name: "{{ item }}"
+    state: directory
+    owner: root
+    group: grafana
+    mode: "1750"
+  with_items:
+    - "/etc/grafana/"
+    - "/opt/grafana/bin"
+    - "/opt/grafana/releases"
+  tags:
+    - grafana
+
+- name: grafana | directories | create data dir
+  file:
+    name: "{{ item }}"
+    state: directory
+    owner: grafana
+    group: grafana
+    mode: "1750"
+  with_items:
+    - "/opt/grafana/data"
+  tags:
+    - grafana
+
+
+- name: grafana | release | download
+  get_url:
+    url: "https://grafanarel.s3.amazonaws.com/builds/grafana-{{ grafana_version }}.{{ grafana_arch }}.tar.gz"
+    dest: "/opt/grafana/releases/grafana-{{ grafana_version }}.tgz"
+    owner: root
+    group: grafana
+    mode: "0640"
+  register: grafana_version_changed
+  tags:
+    - grafana
+
+
+- name: grafana| release | extract
+  unarchive:
+    copy: no
+    src: "/opt/grafana/releases/grafana-{{ grafana_version }}.tgz"
+    dest: "/opt/grafana/releases"
+    creates: "/opt/grafana/releases/grafana-{{ grafana_version }}"
+    owner: root
+    group: grafana
+    mode: "1750"
+    force: yes
+  when: grafana_version_changed | changed
+  tags:
+    - grafana
+
+
+- name: grafana | release | symlink
+  file:
+    src: "/opt/grafana/releases/grafana-{{ grafana_version }}/bin/grafana-server"
+    dest: "/opt/grafana/bin/grafana-server"
+    state: link
+    owner: root
+    group: grafana
+    mode: "1750"
+    force: yes
+  tags:
+    - grafana
+
+
+- name: grafana | configuration | create
+  template:
+    src: grafana.ini.j2
+    dest: /etc/grafana/config.ini
+    owner: root
+    group: grafana
+    mode: "0640"
+  tags:
+    - grafana
+
+
+- name: grafana | service | create unit file
+  template:
+    src: systemd.grafana.service.j2
+    dest: /etc/systemd/system/grafana.service
+    owner: root
+    group: root
+    mode: "0640"
+  tags:
+    - grafana
+
+- name: grafana | service | enable and run
+  service:
+    name: grafana
+    state: running
+    daemon_reload: yes
+    enabled: yes
+  tags:
+    - grafana
+    - service
+
+- include: firewalld.yml
+  when: "not skip_firewalld"
+
+- include: consul.yml
+  when: "'consul' in group_names"

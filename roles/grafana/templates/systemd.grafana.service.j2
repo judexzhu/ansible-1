@@ -1,0 +1,30 @@
+[Unit]
+Description=Grafana service
+After=network.target
+Wants=network.target
+
+[Service]
+EnvironmentFile=-/etc/sysconfig/grafana
+ExecStart=/opt/grafana/bin/grafana-server -homepath /opt/grafana/releases/grafana-{{ grafana_version }} -config /etc/grafana/config.ini
+ExecReload=/usr/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=20
+TimeoutSec=300
+StandardOutput=journal
+StandardError=journal
+User=grafana
+Group=grafana
+ProtectSystem=full
+ProtectHome=yes
+PrivateTmp=yes
+CapabilityBoundingSet=
+ReadOnlyPaths=/
+ReadWritePaths=/opt/grafana/data /var/log/grafana
+NoNewPrivileges=yes
+CPUAccounting=yes
+MemoryAccounting=yes
+IOAccounting=yes
+TasksAccounting=yes
+
+[Install]
+WantedBy=multi-user.target

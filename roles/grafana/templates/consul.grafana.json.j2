@@ -1,0 +1,10 @@
+{"service":
+  { "name": "grafana",
+    "tags": [
+      "monitoring"
+    ],
+    "address": "{{grafana_listen_address}}",
+    "port": {{grafana_listen_port}},
+    "check": {"http": "http://{{grafana_listen_address}}:{{grafana_listen_port}}/","interval":"10s"}
+  }
+}

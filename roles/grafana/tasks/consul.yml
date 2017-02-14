@@ -1,0 +1,16 @@
+---
+
+- name: grafana | consul | define service
+  template:
+    src: consul.grafana.json.j2
+    dest: "{{ consul_config_dir }}/grafana.json"
+    owner: root
+    group: consul
+    mode: "0640"
+  when: "'consul' in group_names"
+  notify:
+    - consul | service | reload
+  tags:
+    - grafana
+    - consul
+    - service
