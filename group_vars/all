@@ -1,0 +1,7 @@
+ansible_managed_header: "This file is centrally managed.\n# All changes will be reverted and reported"
+
+
+skip_firewalld: no
+skip_auditd: no
+skip_docker: no
+
