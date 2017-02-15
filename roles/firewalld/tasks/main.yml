@@ -26,6 +26,7 @@
   with_items:
     - /etc/firewalld
     - /etc/firewalld/zones
+    - /etc/firewalld/ipsets
     - /etc/firewalld/services
   tags:
     - firewall

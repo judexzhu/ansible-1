@@ -2,3 +2,22 @@
 
 - name: firewalld | policy | reload
   command: /bin/firewall-cmd --reload
+  tags:
+    - firewalld
+
+- name: firewalld | service | reload
+  service:
+    name: firewalld
+    state: reloaded
+  tags:
+    - firewalld
+    - service
+
+
+- name: firewalld | service | restart
+  service:
+    name: firewalld
+    state: restarted
+  tags:
+    - firewalld
+    - service
