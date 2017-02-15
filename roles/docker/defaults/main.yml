@@ -4,3 +4,4 @@ docker_packages:
   - python-docker-py
 
 docker_service_name: docker
+docker_cluster_store: ""

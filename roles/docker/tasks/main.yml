@@ -10,6 +10,8 @@
   tags:
     - docker
 
+
+
 - name: docker | packages | install
   package:
     name: "{{ item }}"
@@ -19,10 +21,21 @@
     - docker
 
 
+- name: docker | service | define
+  template:
+    src: systemd.docker.service.j2
+    dest: /etc/systemd/system/docker.service
+    owner: root
+    group: root
+    mode: "0640"
+  tags:
+    - docker
+
 - name: docker | service | enable and run
   service:
     name: "{{ docker_service_name }}"
     state: running
+    daemon_reload: yes
     enabled: yes
   tags:
     - docker
