@@ -40,13 +40,13 @@ scrape_configs:
         - '/etc/prometheus/sd/node_exporter_*.yml'
         - '/etc/prometheus/sd/node_exporter_*.yaml'
 
-  - job_name: etcd-peer
+  - job_name: etcd
     consul_sd_configs:
     {% for consul_node in groups['consul_server'] %}
 
       - server: "{{ consul_node }}:8500"
         services:
-          - "etcd-peer"
+          - "etcd-client"
 
     {% endfor %}
 
