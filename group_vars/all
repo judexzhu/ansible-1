@@ -6,7 +6,7 @@ skip_auditd: no
 skip_docker: no
 skip_monitoring: no
 skip_consul: no
-skip_sysdig: "{{ ansible_os_family == 'RedHat' }}"
+skip_sysdig: "{{ not ansible_os_family == 'RedHat' }}"
 
 skip_ids: yes
 
