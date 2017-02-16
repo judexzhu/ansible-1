@@ -4,4 +4,11 @@ ansible_managed_header: "This file is centrally managed.\n# All changes will be 
 skip_firewalld: no
 skip_auditd: no
 skip_docker: no
+skip_monitoring: no
+skip_consul: no
+skip_sysdig: "{{ ansible_os_family == 'RedHat' }}"
+
+skip_ids: yes
+
+
 
