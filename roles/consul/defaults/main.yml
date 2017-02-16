@@ -1,6 +1,6 @@
 consul_version: "0.7.4"
 
-consul_server: "{{ 'consul_server' in group_names }}"
+consul_server: "{{ 'consul_servers' in group_names }}"
 
 consul_checksum: "sha256:23a61773bee9b29198cc1f8fe2e62c320f82f95006ff70840c15c1e58eead73b"
 consul_arch: "linux_amd64"
@@ -12,7 +12,7 @@ consul_data_dir: "/opt/consul/data"
 consul_domain: "consul"
 consul_datacenter: "dc1"
 consul_address: "{{ ansible_default_ipv4['address'] }}"
-consul_servers: "{{ groups['consul_server'] }}"
+consul_servers: "{{ groups['consul_servers'] }}"
 consul_key: "{{ 'this is 16 bytes' | b64encode }}"
 
 # Custom config goes here

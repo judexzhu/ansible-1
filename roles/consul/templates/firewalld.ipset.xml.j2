@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ipset type="hash:ip">
+  <short>{{ ipset_name }}</short>
+  <description>{{ ipsec_description | default("") }}</description>
+  {% for node in ipset_entries | sort %}
+  <entry>{{ node }}</entry>
+  {% endfor %}
+</ipset>

@@ -1,45 +1,94 @@
 ---
 
-- name: consul | firewall | create rule for lan traffic
+- name: consul | firewalld | create client ipset
+  template:
+    src: firewalld.ipset.xml.j2
+    dest: "/etc/firewalld/ipsets/{{ ipset_name }}.xml"
+    owner: root
+    group: root
+    mode: "0640"
+  register: consul_clients_ipset_changed
+  vars:
+    ipset_name: consul_clients
+    ipset_description: "Consul client nodes"
+    ipset_entries: "{{ groups['all']}}"
+  tags:
+    - consul
+    - firewalld
+
+
+- name: consul | firewalld | create server ipset
+  template:
+    src: firewalld.ipset.xml.j2
+    dest: "/etc/firewalld/ipsets/{{ ipset_name }}.xml"
+    owner: root
+    group: root
+    mode: "0640"
+  register: consul_servers_ipset_changed
+  vars:
+    ipset_name: consul_servers
+    ipset_description: "Consul server nodes"
+    ipset_entries: "{{ groups['consul_servers']}}"
+  tags:
+    - consul
+    - firewalld
+
+
+- name: consul | firewalld | create rule for lan client gossip
   firewalld:
-    port: "{{ item }}"
+    rich_rule: "rule source ipset='consul_clients' port port='8301' protocol='{{ item }}'  audit limit value='15/m' accept"
+    zone: public
+    permanent: true
     state: enabled
-    permanent: yes
-    immediate: yes
-  when: "not skip_firewalld"
+  when: "consul_clients_ipset_changed|changed"
   with_items:
-    - "8301/udp"
-    - "8301/tcp"
+    - "tcp"
+    - "udp"
+  notify:
+    - firewalld | service | restart
+    - firewalld | policy | reload
   tags:
     - consul
     - firewall
 
-- name: consul | firewall | create rule for wan traffic
+- name: consul | firewalld| create rule for wan server gossip
   firewalld:
-    port: "{{ item }}"
+    rich_rule: "rule source ipset='consul_servers' port port='8302' protocol='{{ item }}'  audit limit value='15/m' accept"
+    zone: public
+    permanent: true
     state: enabled
-    permanent: yes
-    immediate: yes
-  when: "consul_server and not skip_firewalld"
+  when: "consul_server and consul_servers_ipset_changed|changed"
   with_items:
-    - "8302/udp"
-    - "8302/tcp"
+    - "tcp"
+    - "udp"
   tags:
     - consul
     - firewall
 
-- name: consul | firewall | create rule for server traffic
+- name: consul | firewalld | create rule for lan clients to lan servers
+  firewalld:
+    rich_rule: "rule source ipset='consul_clients' port port='8300' protocol='tcp'  audit limit value='30/m' accept"
+    zone: public
+    permanent: true
+    state: enabled
+  when: "consul_server and consul_clients_ipset_changed|changed"
+  tags:
+    - consul
+    - firewall
+
+
+- name: consul | firewalld | create rule for consul server services
   firewalld:
     port: "{{ item }}"
     state: enabled
     permanent: yes
     immediate: yes
-  when: "consul_server and not skip_firewalld"
+  when: "consul_server"
   with_items:
-    - "8300/tcp"
     - "8500/tcp"
     - "8600/udp"
     - "8600/tcp"
   tags:
     - consul
     - firewall
+
