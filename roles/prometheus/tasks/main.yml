@@ -40,17 +40,18 @@
     - monitoring
 
 
+- include: node_exporter.yml
+  when: "not skip_monitoring"
 
 - include: server.yml
-  when: "'prometheus_server' in group_names"
+  when: "prometheus_server"
 
 - include: alertmanager.yml
   when: "prometheus_alertmanager"
 
-- include: node_exporter.yml
 
 - include: haproxy_exporter.yml
   when: "prometheus_haproxy_exporter"
 
 - include: consul.yml
-  when: "'consul' in group_names"
+  when: "not skip_consul"

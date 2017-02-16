@@ -1,4 +1,4 @@
 dependencies:
   - src: consul
-    when: "'consul' in group_names"
+    when: "not skip_consul"
 

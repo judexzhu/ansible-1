@@ -7,7 +7,7 @@
     owner: root
     group: consul
     mode: "0640"
-  when: "'consul' in group_names and prometheus_server"
+  when: "prometheus_server"
   notify:
     - consul | service | reload
   tags:
@@ -24,7 +24,7 @@
     owner: root
     group: consul
     mode: "0640"
-  when: "'consul' in group_names and prometheus_alertmanager"
+  when: "prometheus_alertmanager"
   notify:
     - consul | service | reload
   tags:
@@ -42,7 +42,7 @@
     owner: root
     group: consul
     mode: "0640"
-  when: "'consul' in group_names and prometheus_haproxy_exporter"
+  when: "prometheus_haproxy_exporter"
   notify:
     - consul | service | reload
   tags:
@@ -59,7 +59,7 @@
     owner: root
     group: consul
     mode: "0640"
-  when: "'consul' in group_names"
+  when: "not skip_consul"
   notify:
     - consul | service | reload
   tags:

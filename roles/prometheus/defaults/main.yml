@@ -25,6 +25,6 @@ prometheus_haproxy_exporter_user: haproxy_exporter
 prometheus_haproxy_exporter_uri: "unix:///var/lib/haproxy/stats"
 
 
-prometheus_server: "{{ 'prometheus_server' in group_names }}"
-prometheus_haproxy_exporter: "{{ 'prometheus_haproxy_exporter' in group_names }}"
-prometheus_alertmanager: "{{ 'prometheus_alertmanager' in group_names }}"
+prometheus_server: "{{ 'prometheus_servers' in group_names }}"
+prometheus_haproxy_exporter: "{{ 'haproxy' in group_names }}"
+prometheus_alertmanager: "{{ 'prometheus_alertmanagers' in group_names }}"
