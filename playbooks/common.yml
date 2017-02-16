@@ -6,14 +6,9 @@
     - {role: selinux, when: "ansible_os_family == 'RedHat'"}
     - common
     - hardening
-    - {role: firewalld, when: "not skip_firewalld | default(False)"}
+    - {role: 'firewalld', when: "not skip_firewalld"}
+    - {role: 'suricata', when: 'not skip_ids'}
     - fail2ban
     - openssh
-    - {role: auditd, when: "not skip_auditd | default(False)"}
-    - {role: sysdig, when: "not skip_sysdig | default(False)"}
-    - {role: docker, when: "not skip_docker | default(False)"}
-
-- hosts: ids
-  roles:
-    - suricata
-    - fail2ban
+    - {role: auditd, when: "not skip_auditd"}
+    - {role: sysdig, when: "not skip_sysdig"}
