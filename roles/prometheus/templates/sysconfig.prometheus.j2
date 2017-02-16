@@ -2,5 +2,5 @@
 OPTS='-storage.local.path={{ prometheus_server_data_path}}' \
   '-web.console.templates=/opt/prometheus/releases/current/consoles' \
   '-web.console.libraries=/opt/prometheus/releases/current/console_libraries' \
-  '-alertmanager.url={%- for am in groups["prometheus_alertmanager"] -%}http://{{ am }}:9093,{%- endfor -%}' \
+  '-alertmanager.url={%- for am in groups["prometheus_alertmanagers"] -%}http://{{ am }}:9093,{%- endfor -%}' \
   '-web.listen-address {{ prometheus_server_listen_address }}:{{ prometheus_server_listen_port }}'

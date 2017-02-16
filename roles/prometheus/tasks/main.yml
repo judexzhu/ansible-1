@@ -49,9 +49,11 @@
 - include: alertmanager.yml
   when: "prometheus_alertmanager"
 
-
 - include: haproxy_exporter.yml
   when: "prometheus_haproxy_exporter"
+
+- include: firewalld.yml
+  when: "not skip_firewalld"
 
 - include: consul.yml
   when: "not skip_consul"

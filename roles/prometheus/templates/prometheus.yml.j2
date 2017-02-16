@@ -26,7 +26,7 @@ scrape_configs:
 
   - job_name: "node"
     consul_sd_configs:
-    {% for consul_node in groups['consul_server'] %}
+    {% for consul_node in groups['consul_servers'] %}
 
       - server: "{{ consul_node }}:8500"
         services:
@@ -42,7 +42,7 @@ scrape_configs:
 
   - job_name: etcd
     consul_sd_configs:
-    {% for consul_node in groups['consul_server'] %}
+    {% for consul_node in groups['consul_servers'] %}
 
       - server: "{{ consul_node }}:8500"
         services:
@@ -58,7 +58,7 @@ scrape_configs:
 
   - job_name: "haproxy"
     consul_sd_configs:
-    {% for consul_node in groups['consul_server'] %}
+    {% for consul_node in groups['consul_servers'] %}
 
       - server: "{{ consul_node }}:8500"
         services:

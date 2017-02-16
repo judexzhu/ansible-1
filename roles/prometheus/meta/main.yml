@@ -1,4 +1,6 @@
 dependencies:
-  - src: consul
+  - role: consul
     when: "not skip_consul"
+  - role: firewalld
+    when: "not skip_firewalld"
 

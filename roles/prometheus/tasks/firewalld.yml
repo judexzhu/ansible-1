@@ -1,34 +1,107 @@
 ---
 
-- name: prometheus| firewall | node exporter
+- name: prometheus| firewalld | create prometheus_servers ipset
+  template:
+    src: firewalld.ipset.xml.j2
+    dest: /etc/firewalld/ipsets/prometheus_servers.xml
+    owner: root
+    group: root
+    mode: "0640"
+  register: prometheus_servers_ipset_changed
+  vars:
+    ipset_name: prometheus_servers
+    ipset_description: "Prometheus servers allowed to scrape node stats"
+    ipset_entries: "{{ groups['prometheus_servers']}}"
+  tags:
+    - prometheus
+    - firewalld
+
+
+- name: prometheus| firewalld | create prometheus_alertmanagers ipset
+  template:
+    src: firewalld.ipset.xml.j2
+    dest: /etc/firewalld/ipsets/prometheus_alertmanagers.xml
+    owner: root
+    group: root
+    mode: "0640"
+  register: prometheus_alertmanagers_ipset_changed
+  when: "prometheus_alertmanager"
+  vars:
+    ipset_name: prometheus_alertmanagers
+    ipset_description: "Prometheus alertmanager nodes"
+    ipset_entries: "{{ groups['prometheus_alertmanagers']}}"
+  tags:
+    - prometheus
+    - alertmanager
+    - firewalld
+
+
+- name: prometheus| firewalld | node exporter scrape rule
   firewalld:
-    port: "{{ item }}"
+    rich_rule: "rule source ipset='prometheus_servers' port port='9100' protocol='tcp'  audit limit value='15/m' accept"
+    zone: public
+    permanent: true
     state: enabled
-    permanent: yes
-    immediate: yes
-  when: "not skip_firewalld"
-  with_items:
-    - "9100/tcp"
+  when: "prometheus_servers_ipset_changed|changed"
+  notify:
+    - firewalld | service | restart
+    - firewalld | policy | reload
   tags:
     - prometheus
     - node_exporter
-    - firewall
+    - firewalld
 
-- name: prometheus| firewall | haproxy exporter
+- name: prometheus| firewalld | haproxy exporter scrape rule
   firewalld:
-    port: "{{ item }}"
+    rich_rule: "rule source ipset='prometheus_servers' port port='9091' protocol='tcp'  audit limit value='15/m' accept"
+    zone: public
+    permanent: true
     state: enabled
-    permanent: yes
-    immediate: yes
-  when: "not skip_firewalld and prometheus_haproxy_exporter"
-  with_items:
-    - "9091/tcp"
+  when: "prometheus_servers_ipset_changed|changed and prometheus_haproxy_exporter"
+  notify:
+    - firewalld | service | restart
+    - firewalld | policy | reload
   tags:
     - prometheus
     - haproxy_exporter
-    - firewall
+    - firewalld
 
-- name: prometheus| firewall | alertmanager
+- name: prometheus | firewalld | alertmanager push rule
+  firewalld:
+    rich_rule: "rule source ipset='prometheus_servers' port port='9093' protocol='tcp'  audit limit value='15/m' accept"
+    zone: public
+    permanent: true
+    state: enabled
+  when: "prometheus_servers_ipset_changed|changed and prometheus_alertmanager"
+  notify:
+    - firewalld | service | restart
+    - firewalld | policy | reload
+  tags:
+    - prometheus
+    - alertmanager
+    - firewalld
+
+
+- name: prometheus | firewalld | alertmanager mesh rule
+  firewalld:
+    rich_rule: "rule source ipset='prometheus_alertmanagers' port port='6783' protocol='tcp'  audit limit value='15/m' accept"
+    zone: public
+    permanent: true
+    state: enabled
+  when: "prometheus_alertmanagers_ipset_changed|changed and prometheus_alertmanager"
+  notify:
+    - firewalld | service | restart
+    - firewalld | policy | reload
+  tags:
+    - prometheus
+    - alertmanager
+    - firewalld
+
+
+
+# TODO: Define an alertmanager client ipset?
+
+- name: prometheus| firewalld | alertmanager
   firewalld:
     port: "{{ item }}"
     state: enabled
