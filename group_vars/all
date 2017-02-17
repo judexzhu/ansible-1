@@ -1,4 +1,4 @@
-ansible_managed_header: "This file is centrally managed.\n# All changes will be reverted and reported"
+ansible_managed: "This file is centrally managed.\n# All changes will be reverted and reported"
 
 
 skip_firewalld: no
