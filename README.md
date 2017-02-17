@@ -11,38 +11,70 @@ These are part of the common playbook (playbooks/common.yml), which is applied t
 
 All roles (will eventually) come with a README that details their functionality.
 
-default profile
------------------
+Motivations
+------------
 
-Currently, calling ansible-playbook, and using the included site.yml, will:
+I have two domains, and two VPSes.
 
-* do some basic setup and hardening (see common and hardening roles)
-* install firewalld and fail2ban
-* install auditd
-* install docker (for RedHat-likes, it will use the docker repo, rather than EPEL).
-* install rkhunter, sysdig, and falco
-* tighten up the SSH server
-* install and configure selinux to enforcing mode
-* install prometheus' node_exporter
+I currently have one VPS per domain.
 
-The following switches exist to skip parts of this
+I run some services for each domain, which are mainly web-based apps, with DBs.
 
-* skip_auditd
-* skip_firewalld
-* skip_sysdig
-* skip_monitoring (which currently skips prometheus)
-* skip_docker
+I would like to have both VPSes serve both domains, without a load balancer in front.
+I don't necessarily have the VPSes on the same provider, and my only tool is DNS.
+I may introduce a load-balancer layer in future, but the basic site should work either way.
 
-Additionally, it can:
+I would like to have this setup be completely transparent to users.
 
-* for hosts in the 'consul' group, install consul and run it as an agent, to advertise services running on the node
-* for hosts in the 'ids' group, configure suricata, and configure fail2ban to use its logs.
-* for hosts in the 'consul_server' group, configure consul in server mode, and install the UI.
-* for hosts in the 'prometheus_server' group, configure prometheus, and advertise it with consul.
-* for hosts in the 'prometheus_alertmanager' group, configure prometheus' alertmanager, and advertise it with consul.
+I would like to ensure my domains are completely separated (i.e. tenant isolation).
 
-You can ignore/avoid all service (i.e. systemd) related calls with `--skip-tags service`.
-This aims to help use the roles in docker containers.
+I would like to use only my system's init manager (which is systemd), and not rely on docker beyond containerisation.
+I don't want orchestration, because I basically only run Daemonsets/StatefulSets ( in k8s terms ).
+
+I would like all data to be encrypted between endpoints.
+
+I don't care so much about efficient packing, I mainly want one instance per node of my domain services.
+
+I want monitoring and logging to be available centrally, and built in to the system.
+
+Approach
+-------------
+
+The playbooks aim to fullfill two basic deployment scenarios:
+
+* within a trusted LAN, to build either a lab or home/soho network for a person with too much time on their hands.
+* to provision internet facing services across machines that speak SSH.
+
+The intent is for the latter scenario to be the default one, with switches to disable the paranoia/overhead.
+
+Docker is used/assumed for running containers.
+
+However, docker is only used for two aspects of the overall setup:
+
+* actually running containers (i.e. could be replaced by rkt)
+* container network creation (calico is already used to provide policy and IPAM)
+
+The basic result is a fully uncoordinated service set based on node count.
+Failover is achieved by having each node run a container-aware proxy that can use services running on other nodes.
+Additionally, systemd is used to (try and) restart failed containers.
+
+Wherever possible, DNS SRV records are used for service discovery.
+
+
+Basic usage
+---------------
+
+The intent is for a host to use layers of setup:
+
+* the common layer provides a reasonably good basis for any given system
+* the infra layer provides shared services like etcd, ntp, dns and service discovery with consul
+* the monitoring layer provides a prometheus based monitoring setup (currently)
+* the logging layer defines the logging infrastructure, with syslog, ELK
+* the identity layer currently provides 2FA and auth via privacyIDEA, and a PKI using cfssl
+* the compute layer provides docker and/or libvirt with kvm/qemu, calico
+* the load balancing layer provides haproxy and vulcand
+* the application layer deploys containerised applications and services
+
 
 License
 --------
