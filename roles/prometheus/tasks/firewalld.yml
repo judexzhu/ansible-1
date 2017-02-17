@@ -1,13 +1,9 @@
 ---
 
 - name: prometheus| firewalld | create prometheus_servers ipset
-  template:
-    src: firewalld.ipset.xml.j2
-    dest: /etc/firewalld/ipsets/prometheus_servers.xml
-    owner: root
-    group: root
-    mode: "0640"
-  register: prometheus_servers_ipset_changed
+  include_role:
+    name: firewalld
+    tasks_from: ipset
   vars:
     ipset_name: prometheus_servers
     ipset_description: "Prometheus servers allowed to scrape node stats"
@@ -18,13 +14,9 @@
 
 
 - name: prometheus| firewalld | create prometheus_alertmanagers ipset
-  template:
-    src: firewalld.ipset.xml.j2
-    dest: /etc/firewalld/ipsets/prometheus_alertmanagers.xml
-    owner: root
-    group: root
-    mode: "0640"
-  register: prometheus_alertmanagers_ipset_changed
+  include_role:
+    name: firewalld
+    tasks_from: ipset
   when: "prometheus_alertmanager"
   vars:
     ipset_name: prometheus_alertmanagers
@@ -36,13 +28,9 @@
     - firewalld
 
 - name: prometheus| firewalld | create grafana_servers ipset
-  template:
-    src: firewalld.ipset.xml.j2
-    dest: "/etc/firewalld/ipsets/{{ ipset_name }}.xml"
-    owner: root
-    group: root
-    mode: "0640"
-  register: grafana_servers_ipset_changed
+  include_role:
+    name: firewalld
+    tasks_from: ipset
   when: "groups.get('grafana_servers',[])| length"
   vars:
     ipset_name: grafana_servers
@@ -59,9 +47,7 @@
     zone: public
     permanent: true
     state: enabled
-  when: "prometheus_servers_ipset_changed|changed"
   notify:
-    - firewalld | service | restart
     - firewalld | policy | reload
   tags:
     - prometheus
@@ -74,9 +60,8 @@
     zone: public
     permanent: true
     state: enabled
-  when: "prometheus_servers_ipset_changed|changed and prometheus_haproxy_exporter"
+  when: "prometheus_haproxy_exporter"
   notify:
-    - firewalld | service | restart
     - firewalld | policy | reload
   tags:
     - prometheus
@@ -90,7 +75,6 @@
     zone: public
     permanent: true
     state: enabled
-  when: "prometheus_servers_ipset_changed|changed and prometheus_alertmanager"
   notify:
     - firewalld | service | restart
     - firewalld | policy | reload
@@ -106,7 +90,7 @@
     zone: public
     permanent: true
     state: enabled
-  when: "prometheus_alertmanagers_ipset_changed|changed and prometheus_alertmanager"
+  when: "prometheus_alertmanager"
   notify:
     - firewalld | service | restart
     - firewalld | policy | reload
@@ -140,7 +124,7 @@
     zone: public
     permanent: true
     state: enabled
-  when: "grafana_servers_ipset_changed|changed and prometheus_server"
+  when: "prometheus_server"
   notify:
     - firewalld | service | restart
     - firewalld | policy | reload
