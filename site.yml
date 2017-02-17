@@ -1,5 +1,5 @@
 ---
 
 - include: playbooks/common.yml
+- include: playbooks/infra.yml
 - include: playbooks/monitoring.yml
-- include: playbooks/load_balancing.yml

@@ -1,0 +1,22 @@
+---
+
+# Installs agent on all nodes.
+# Also configures required services for servers in consul_servers group.
+
+- hosts: all
+  roles:
+    - {role: consul, when: "not skip_consul"}
+
+- hosts:
+    - etcd_servers
+  roles:
+    - etcd
+
+# TODO: pdns
+- hosts: dns_servers
+  roles: []
+
+
+# TODO: ntp
+- hosts: ntp_servers
+  roles: []
