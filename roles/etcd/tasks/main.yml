@@ -1,0 +1,45 @@
+---
+
+- name: etcd | packages | install
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ etcd_packages }}"
+  tags:
+    - etcd
+
+- name: etcd | data | create dir
+  file:
+    name: "{{ etcd_data_dir }}"
+    state: directory
+    owner: etcd
+    group: etcd
+    mode: "1750"
+  tags:
+    - etcd
+
+- name: etcd | configuration | create
+  template:
+    src: config.yml.j2
+    dest: /etc/etcd/config.yml
+    owner: root
+    group: etcd
+    mode: "0640"
+  tags:
+    - etcd
+
+- name: etcd | service | enable and run
+  service:
+    name: "{{ item }}"
+    state: running
+    enabled: yes
+  with_items: "{{ etcd_services }}"
+  tags:
+    - etcd
+
+
+- include: consul.yml
+  when: "not skip_consul"
+
+- include: firewalld.yml
+  when: "not skip_firewalld"

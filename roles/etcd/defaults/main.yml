@@ -1,0 +1,41 @@
+---
+
+etcd_server: "{{ 'etcd_servers' in group_names }}"
+
+etcd_node_name: "{{ ansible_hostname }}"
+
+etcd_packages:
+  - etcd
+
+etcd_services:
+  - etcd
+
+etcd_data_dir: /data/etcd/
+etcd_auto_tls: yes
+
+etcd_initial_cluster_token: "{{ etcd_initial_cluster | join(',') | hash('sha1') }}"
+etcd_discovery_srv: false
+
+etcd_listen_address: "{{ ansible_default_ipv4['address'] }}"
+
+
+etcd_clients: []
+
+
+# TODO: Make this less horrible
+
+etcd_listen_client_urls:
+  - "http://localhost:2379"
+  - "http://{{ etcd_listen_address }}:2379"
+
+etcd_advertise_client_urls:
+  - "http://{{ etcd_listen_address }}:2379"
+
+etcd_listen_peer_urls:
+  - "http://{{ etcd_listen_address }}:2380"
+
+etcd_initial_advertise_peer_urls:
+  - "http://{{ etcd_listen_address }}:2380"
+
+etcd_initial_cluster:
+  - "{{ etcd_node_name }}=http://{{ etcd_listen_address }}:2380"

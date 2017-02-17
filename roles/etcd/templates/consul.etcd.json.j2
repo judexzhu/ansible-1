@@ -1,0 +1,23 @@
+// Creates etcd-server and etcd-client records for use in SRV based discovery
+{"services":
+  [
+    {
+      "name": "etcd-server",
+      "tags": [
+        "tcp"
+      ],
+      "address": "{{ etcd_listen_address }}",
+      "port": 2380,
+      "check": {"tcp": "{{ etcd_listen_address }}:2380","interval":"10s"}
+    },
+    {
+      "name": "etcd-client",
+      "tags": [
+        "tcp"
+      ],
+      "address": "{{ etcd_listen_address }}",
+      "port": 2379,
+      "check": {"http": "http://localhost:2379/metrics","interval":"10s"}
+    }
+  ]
+}

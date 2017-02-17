@@ -1,0 +1,69 @@
+---
+
+- name: etcd | firewalld | create server ipset
+  include_role:
+    name: firewalld
+    tasks_from: ipset
+  vars:
+    ipset_name: etcd_servers
+    ipset_description: etcd server nodes to peer with
+    ipset_entries: "{{ groups['etcd_servers'] }}"
+  tags:
+    - etcd
+    - firewalld
+
+- name: etcd | firewalld | create client ipset
+  include_role:
+    name: firewalld
+    tasks_from: ipset
+  when: "etcd_clients | length"
+  vars:
+    ipset_name: etcd_clients
+    ipset_description: etcd clients nodes
+    ipset_entries: "{{ set(groups[etcd_servers].extend(etcd_clients)) }}"
+  tags:
+    - etcd
+    - firewalld
+
+- name: etcd | firewall | create client rule
+  firewalld:
+    port: "{{ item }}"
+    state: enabled
+    permanent: yes
+    immediate: yes
+  when: "not etcd_clients | length "
+  with_items:
+    - "2379/tcp"
+  notify:
+    - firewalld | policy | reload
+  tags:
+    - etcd
+    - firewalld
+
+- name: etcd | firewall | create client rule from ipset
+  firewalld:
+    rich_rule: "rule source ipset='etcd_clients' port port='2379' protocol='tcp'  audit limit value='15/m' accept"
+    zone: public
+    permanent: true
+    state: enabled
+  when: "etcd_clients | length "
+  notify:
+    - firewalld | policy | reload
+  tags:
+    - etcd
+    - firewalld
+
+
+- name: etcd | firewall | create server rule
+  firewalld:
+    rich_rule: "rule source ipset='etcd_servers' port port='2380' protocol='tcp'  audit limit value='5/m' accept"
+    zone: public
+    permanent: true
+    state: enabled
+  notify:
+    - firewalld | policy | reload
+  tags:
+    - etcd
+    - firewalld
+
+

@@ -1,0 +1,15 @@
+---
+
+- name: etcd | consul | define service
+  template:
+    src: consul.etcd.json.j2
+    dest: "{{ consul_config_dir }}/etcd.json"
+    owner: root
+    group: consul
+    mode: "0640"
+  notify:
+    - consul | service | reload
+  tags:
+    - etcd
+    - consul
+    - service
