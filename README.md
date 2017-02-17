@@ -22,20 +22,25 @@ I run some services for each domain, which are mainly web-based apps, with DBs.
 
 I would like to have both VPSes serve both domains, without a load balancer in front.
 I don't necessarily have the VPSes on the same provider, and my only tool is DNS.
-I may introduce a load-balancer layer in future, but the basic site should work either way.
+I may introduce a load-balancer layer in future, but the basic domain services should work either way.
 
 I would like to have this setup be completely transparent to users.
 
 I would like to ensure my domains are completely separated (i.e. tenant isolation).
 
-I would like to use only my system's init manager (which is systemd), and not rely on docker beyond containerisation.
+I would like to use mainly my system's init manager (which is systemd), and not rely on docker beyond containerisation.
 I don't want orchestration, because I basically only run Daemonsets/StatefulSets ( in k8s terms ).
+I would like systemd to handle container lifecycles.
 
 I would like all data to be encrypted between endpoints.
 
 I don't care so much about efficient packing, I mainly want one instance per node of my domain services.
 
+I would like the system to make use of any running component of a given domain service.
+Ideally, if the local instance fails, the application will be able to use a remote instance.
+
 I want monitoring and logging to be available centrally, and built in to the system.
+
 
 Approach
 -------------
@@ -75,6 +80,8 @@ The intent is for a host to use layers of setup:
 * the load balancing layer provides haproxy and vulcand
 * the application layer deploys containerised applications and services
 
+Storage is planned for, but I need to research it properly.
+For my current use case/situation, local storage and NFS are sufficient.
 
 License
 --------
