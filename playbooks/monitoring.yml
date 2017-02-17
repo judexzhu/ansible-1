@@ -1,12 +1,23 @@
 ---
 
-# By default, this will provision node_exporter, and a consul agent.
 - hosts: all
   roles:
-    - {role: prometheus, when: "not skip_monitoring|default(False)"}
+    - {role: prometheus, when: "not skip_monitoring" }
 
-# Only needed if a server has skip_monitoring set to true
-- hosts: consul_server
+
+- hosts:
+    - prometheus_servers
+    - prometheus_alertmanagers
   roles:
-    - consul
+    - prometheus
+    - {role: 'grafana', when: 'prometheus_server and not skip_grafana'}
 
+
+# NOTE: In order to have dedicated grafana servers,
+# it will typically be necessary to set prometheus_server_listen_address
+# to something other than 127.0.0.1
+
+- hosts:
+    - grafana_servers
+  roles:
+    - grafana
