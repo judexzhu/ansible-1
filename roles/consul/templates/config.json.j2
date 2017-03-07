@@ -8,7 +8,7 @@
 {% if consul_key %}
 "encrypt": "{{ consul_key }}",
 {% endif %}
-{% if 'consul_server' in group_names %}
+{% if consul_server %}
 "server": true,
 "ui_dir": "/opt/consul/webui",
 "ui": true,
