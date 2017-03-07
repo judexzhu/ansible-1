@@ -12,9 +12,11 @@
   roles:
     - etcd
 
-# TODO: pdns
-- hosts: dns_servers
-  roles: []
+- hosts:
+    - dns_recursors
+    - dns_authoritative
+  roles:
+    - pdns
 
 
 # TODO: ntp
