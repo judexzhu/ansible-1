@@ -1,0 +1,15 @@
+---
+
+- name: pdns | consul | define service
+  template:
+    src: consul.pdns.json.j2
+    dest: "{{ consul_config_dir }}/pdns.json"
+    owner: root
+    group: consul
+    mode: "0640"
+  notify:
+    - consul | service | reload
+  tags:
+    - pdns
+    - consul
+    - service

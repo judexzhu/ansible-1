@@ -1,0 +1,4 @@
+dependencies:
+  - src: consul
+    when: "'consul' in group_names"
+

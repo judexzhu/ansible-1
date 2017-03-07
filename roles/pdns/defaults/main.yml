@@ -1,0 +1,11 @@
+---
+
+
+pdns_recursor: "{{ 'dns_recursors' in group_names }}"
+pdns_authoritative: "{{ 'dns_authoritative' in group_names }}"
+
+pdns_recursor_service: "pdns-recursor"
+pdns_recursor_packages:
+  - pdns-recursor
+
+

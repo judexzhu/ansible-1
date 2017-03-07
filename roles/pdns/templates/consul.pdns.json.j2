@@ -1,0 +1,14 @@
+{"service":
+  { "name": "dns",
+    "tags": [
+      "tcp",
+      "udp",
+    {% if pdns_recursor %}
+      "recursor",
+    {% endif %}
+      "pdns"
+    ],
+    "port": 53,
+    "check": {"tcp": "127.0.0.1:53","interval":"10s"}
+  }
+}

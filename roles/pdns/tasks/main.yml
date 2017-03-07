@@ -1,0 +1,11 @@
+---
+
+- include: recursor.yml
+  when: "pdns_recursor"
+
+- include: consul.yml
+  when: "not skip_consul"
+
+- include: firewalld.yml
+  when: "not skip_firewalld"
+
