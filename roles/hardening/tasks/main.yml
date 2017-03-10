@@ -3,3 +3,5 @@
 - include: securetty.yml
 - include: sysctl.yml
 - include: rkhunter.yml
+- include: yum_security_patching.yml
+  when: "ansible_os_family == 'RedHat'"

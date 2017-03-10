@@ -1,0 +1,33 @@
+---
+
+
+- name: hardening | security patching | create service unit
+  template:
+    src: systemd.service.yum_security_patching.j2
+    dest: /etc/systemd/system/security_patching.service
+    owner: root
+    group: root
+    mode: "0640"
+  tags:
+    - patching
+    - yum
+
+- name: hardening | security patching | create timer unit
+  template:
+    src: systemd.timer.yum_security_patching.j2
+    dest: /etc/systemd/system/security_patching.timer
+    owner: root
+    group: root
+    mode: "0640"
+  tags:
+    - patching
+    - yum
+
+- name: hardening | security patching | enable timer
+  service:
+    name: security_patching.timer
+    state: started
+    enabled: yes
+  tags:
+    - patching
+    - yum

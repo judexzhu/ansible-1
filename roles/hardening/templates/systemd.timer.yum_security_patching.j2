@@ -1,0 +1,13 @@
+[Unit]
+Description=Install security patches from yum evvery 12 hours
+
+[Timer]
+# Wait 10 minutes after boot
+OnBootSec=10min
+OnUnitActiveSec=12h
+Persistent=true
+Unit=security_patching.service
+
+[Install]
+WantedBy=timers.target
+

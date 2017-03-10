@@ -1,0 +1,11 @@
+[Unit]
+Description=Install security patches from yum
+
+[Service]
+Type=oneshot
+UMask=077
+ExecStart=/usr/bin/yum --security -y update-minimal
+PrivateTmp=true
+CPUAccounting=true
+BlockIOAccounting=true
+MemoryAccounting=true
